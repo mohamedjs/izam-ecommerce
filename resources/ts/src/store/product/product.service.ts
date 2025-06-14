@@ -1,61 +1,63 @@
-import { mockProducts } from '@/data/mockProducts';
+import axiosInstance from '@/config/axios';
+import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Product, ProductQuery } from './product.types';
+import { ProductState, ProductFilters } from './product.types';
 
 export class ProductService {
-  static async getProducts(query: ProductQuery = {}): Promise<{
-    products: Product[];
-    totalPages: number;
-    currentPage: number;
-  }> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        let filteredProducts = [...mockProducts];
-        
-        // Apply filters
-        if (query.filters) {
-          const { category, minPrice, maxPrice, search } = query.filters;
-          
-          if (category && category !== 'All') {
-            filteredProducts = filteredProducts.filter(p => p.category === category);
-          }
-          
-          if (minPrice !== undefined) {
-            filteredProducts = filteredProducts.filter(p => p.price >= minPrice);
-          }
-          
-          if (maxPrice !== undefined) {
-            filteredProducts = filteredProducts.filter(p => p.price <= maxPrice);
-          }
-          
-          if (search) {
-            filteredProducts = filteredProducts.filter(p => 
-              p.name.toLowerCase().includes(search.toLowerCase())
-            );
-          }
+  static fetchProductsAsync = createAsyncThunk(
+    'product/fetchProducts',
+    async (query: ProductQuery = {}, thunkApi) => {
+        try {
+             // Build query params
+            const params: any = {
+                page: query.page || 1,
+                limit: query.limit || 6,
+                ...query.filters,
+            };
+            const response = await axiosInstance.get('/v1/products', { params });
+            // Assume Laravel returns { data, current_page, last_page }
+            return {
+                products: response.data.data,
+                totalPages: response.data.last_page,
+                currentPage: response.data.current_page,
+            };
+        } catch (err: any) {
+            thunkApi.rejectWithValue(err)
         }
-        
-        // Pagination
-        const page = query.page || 1;
-        const limit = query.limit || 6;
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
-        const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
-        
-        resolve({
-          products: paginatedProducts,
-          totalPages: Math.ceil(filteredProducts.length / limit),
-          currentPage: page
-        });
-      }, 500);
-    });
+    }
+  );
+
+  static fetchCategoriesAsync = createAsyncThunk(
+    'product/fetchCategories',
+    async (_, thunkApi) => {
+      try {
+        const response = await axiosInstance.get('/v1/products/categories');
+        return response.data;
+      } catch (err: any) {
+        thunkApi.rejectWithValue(err)
+      }
+    }
+  );
+
+  static handleFetchProductsPending(state: ProductState) {
+    state.loading = true;
+    state.error = null;
   }
 
-  static async getCategories(): Promise<string[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const categories = ['All', ...new Set(mockProducts.map(p => p.category))];
-        resolve(categories);
-      }, 200);
-    });
+  static handleFetchProductsFulfilled(state: ProductState, action: PayloadAction<any>) {
+    state.loading = false;
+    state.products = action.payload.products;
+    state.filteredProducts = action.payload.products;
+    state.totalPages = action.payload.totalPages;
+    state.currentPage = action.payload.currentPage;
+  }
+
+  static handleFetchProductsRejected(state: ProductState, action: PayloadAction<any>) {
+    state.loading = false;
+    state.error = action.error.message || 'Failed to fetch products';
+  }
+
+  static handleFetchCategoriesFulfilled(state: ProductState, action: PayloadAction<string[]>) {
+    state.categories = action.payload;
   }
 }

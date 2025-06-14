@@ -1,37 +1,69 @@
 import axiosInstance from '@/config/axios';
-import { mockAuthResponse } from '@/data/mockAuth';
-import { LoginCredentials, SignupCredentials, AuthResponse } from './auth.types';
+import { LoginCredentials, AuthResponse } from './auth.types';
+import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import Cookie from 'js-cookie'
+import { AuthState } from './auth.types';
 
 export class AuthService {
-  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    // Simulate API call with mock data
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          const response = mockAuthResponse.login(credentials.email, credentials.password);
-          resolve(response);
-        } catch (error) {
-          reject(error);
+    static loginAsync = createAsyncThunk(
+        'auth/login',
+        async (credentials: LoginCredentials, thunkApi) => {
+            try {
+                const response = await axiosInstance.post('/v1/login', credentials)
+                return response.data;
+            } catch (err: any) {
+                return thunkApi.rejectWithValue(err)
+            }
         }
-      }, 1000);
-    });
-  }
+    );
 
-  static async signup(credentials: SignupCredentials): Promise<AuthResponse> {
-    // Simulate API call with mock data
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const response = mockAuthResponse.signup(credentials.email, credentials.password, credentials.name);
-        resolve(response);
-      }, 1000);
-    });
-  }
+    static logoutAsync = createAsyncThunk(
+        'auth/logout',
+        async (_, thunkApi) => {
+            try {
+                const response = await axiosInstance.post('/v1/logout')
+                return response.data;
+            } catch (err: any) {
+                return thunkApi.rejectWithValue(err)
+            }
+        }
+    );
 
-  static async logout(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 500);
-    });
-  }
+    static handleLoginPending(state: AuthState) {
+        state.loading = true;
+        state.error = null;
+        state.isAuthenticated=false
+    }
+
+    static handleLoginFulfilled(state: AuthState, action: PayloadAction<AuthResponse>) {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        const options = { expires: new Date(action.payload.expire_at) };
+        Cookie.set("authToken", state.token, options)
+        state.isAuthenticated = true;
+    }
+
+    static handleLoginRejected(state: AuthState, action: PayloadAction<any>) {
+        state.loading = false;
+        state.error = action.error.message || 'Login failed';
+    }
+
+    static handleLogoutPending(state: AuthState) {
+        state.loading = true;
+        state.error = null;
+        state.isAuthenticated=false
+    }
+
+    static handleLogoutRejected(state: AuthState, action: PayloadAction<any>) {
+        state.loading = false;
+        state.error = action.error.message || 'Logout failed';
+    }
+
+    static handleLogoutFulfilled(state: AuthState) {
+        Cookie.remove('authToken')
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+    }
 }

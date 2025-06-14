@@ -26,18 +26,4 @@ class ProductService
         return $this->productRepository->find($id);
     }
 
-    public function createProduct(array $data): Product
-    {
-        return $this->productRepository->create($data);
-    }
-
-    public function updateProduct($id, array $data): ?Product
-    {
-        return $this->productRepository->update($id, $data);
-    }
-
-    public function deleteProduct($id): bool
-    {
-        return $this->productRepository->delete($id);
-    }
-} 
+}

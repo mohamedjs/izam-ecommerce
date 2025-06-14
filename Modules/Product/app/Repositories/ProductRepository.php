@@ -58,35 +58,8 @@ class ProductRepository implements ProductRepositoryInterface
         return $this->model->with('category')->find($id);
     }
 
-    public function create(array $data): Product
-    {
-        $product = $this->model->create($data);
-        $this->clearCache();
-        return $product;
-    }
-
-    public function update($id, array $data): ?Product
-    {
-        $product = $this->find($id);
-        if ($product) {
-            $product->update($data);
-            $this->clearCache();
-            return $product;
-        }
-        return null;
-    }
-
-    public function delete($id): bool
-    {
-        $deleted = $this->model->destroy($id);
-        if ($deleted) {
-            $this->clearCache();
-        }
-        return $deleted;
-    }
-
     protected function clearCache(): void
     {
         Cache::tags(['products'])->flush();
     }
-} 
+}

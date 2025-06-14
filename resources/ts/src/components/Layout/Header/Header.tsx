@@ -1,24 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { logoutAsync } from '@/store/auth/auth.slice';
 import Button from '@/components/shared/Button/Button';
 import './Header.scss';
+import { AuthService } from '@/store/auth/auth.service';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
   const { items } = useAppSelector((state) => state.cart);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
   const handleLogout = () => {
-    dispatch(logoutAsync());
-    navigate('/login');
+    dispatch(AuthService.logoutAsync());
   };
 
   const toggleMobileMenu = () => {
@@ -32,7 +30,7 @@ const Header: React.FC = () => {
         <button className="promo-signup">Sign Up Now</button>
         <button className="promo-close">×</button>
       </div>
-      
+
       <header className="header">
         <div className="header__container">
           <button className="header__mobile-menu" onClick={toggleMobileMenu}>
@@ -59,7 +57,7 @@ const Header: React.FC = () => {
             </Link>
 
             {isAuthenticated ? (
-              <Button variant="primary" size="sm" onClick={handleLogout}>
+              <Button loading={loading} variant="primary" size="sm" onClick={handleLogout}>
                 Logout
               </Button>
             ) : (

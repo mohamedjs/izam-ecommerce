@@ -31,38 +31,19 @@ class AuthController extends Controller
         }
 
         $token = $this->userService->createToken($user);
-        $expiration = now()->addHours(config('users.token_expiration'));
-
-        $cookie = cookie(
-            'auth_token',
-            $token->plainTextToken,
-            $expiration->diffInMinutes(now()),
-            '/',
-            null,
-            true,
-            true,
-            false,
-            'Lax'
-        );
+        $expiration = now()->addHours(config('user.token_expiration'))->format('Y-m-d H:s');
 
         return response()->json([
             'user' => $user,
             'token' => $token->plainTextToken,
-            'expires_at' => $expiration
-        ])->withCookie($cookie);
+            'expire_at' => $expiration
+        ]);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        $cookie = cookie()->forget('auth_token');
 
-        return response()->json(['message' => 'Logged out successfully'])
-            ->withCookie($cookie);
-    }
-
-    public function user(Request $request)
-    {
-        return response()->json($request->user());
+        return response()->json(['message' => 'Logged out successfully'], 201);
     }
 }

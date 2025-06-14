@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Minus, Plus } from 'lucide-react';
-import { removeFromCart, updateQuantity } from '@/store/cart/cart.slice';
 import { CartUtils } from '@/store/cart/cart.utils';
 import Button from '@/components/shared/Button/Button';
 import './Cart.scss';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
+import { CartService } from '@/store/cart/cart.service';
 
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,11 +16,11 @@ const Cart: React.FC = () => {
   const orderId = CartUtils.generateOrderId();
 
   const handleRemoveItem = (itemId: string) => {
-    dispatch(removeFromCart(itemId));
+    dispatch(CartService.removeFromCart(itemId));
   };
 
   const handleUpdateQuantity = (itemId: string, quantity: number) => {
-    dispatch(updateQuantity({ id: itemId, quantity }));
+    dispatch(CartService.updateQuantity({ id: itemId, quantity }));
   };
 
   if (items.length === 0) {

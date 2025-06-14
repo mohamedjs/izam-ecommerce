@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchProductsAsync, fetchCategoriesAsync, setFilters, setCurrentPage } from '@/store/product/product.slice';
+import { setFilters, setCurrentPage } from '@/store/product/product.slice';
 import SearchInput from '@/components/shared/SearchInput/SearchInput';
 import ProductCard from '@/components/Product/ProductCard/ProductCard';
 import ProductFilters from '@/components/Product/ProductFilters/ProductFilters';
@@ -8,6 +8,7 @@ import Button from '@/components/shared/Button/Button';
 import './Products.scss';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { ProductService } from '@/store/product/product.service';
 
 
 const Products: React.FC = () => {
@@ -16,16 +17,16 @@ const Products: React.FC = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchCategoriesAsync());
+    dispatch(ProductService.fetchCategoriesAsync());
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchProductsAsync({ 
-      page: currentPage, 
-      limit: 3, 
-      filters 
+    dispatch(ProductService.fetchProductsAsync({
+      page: currentPage,
+      limit: 3,
+      filters
     }));
-  }, [dispatch, currentPage, filters]);
+  }, [currentPage, filters]);
 
   const handleSearch = useCallback((query: string) => {
     dispatch(setFilters({ ...filters, search: query }));

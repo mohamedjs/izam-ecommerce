@@ -144,11 +144,7 @@ class ProductServiceProvider extends ServiceProvider
     public function registerFactories(): void
     {
         if (! app()->environment('production') && $this->app->runningInConsole()) {
-            Factory::guessFactoryNamesUsing(function (string $modelName) {
-                return 'Modules\\Product\\Database\\Factories\\' . class_basename($modelName) . 'Factory';
-            });
-            
-            $this->loadFactoriesFrom(module_path($this->name, 'database/factories'));
+            app(Factory::class)->load(__DIR__.'/../database/factories');
         }
     }
 

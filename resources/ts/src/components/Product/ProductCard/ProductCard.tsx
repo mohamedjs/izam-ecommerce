@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Product } from '@/store/product/product.types';
-import { addToCart, updateQuantity } from '@/store/cart/cart.slice';
 import Button from '@/components/shared/Button/Button';
 import './ProductCard.scss';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { CartService } from '@/store/cart/cart.service';
 
 interface ProductCardProps {
   product: Product;
@@ -19,12 +19,12 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const quantity = cartItem ? cartItem.quantity : 0;
 
   const handleAddToCart = useCallback(() => {
-    dispatch(addToCart({ product, quantity: 1 }));
+    dispatch(CartService.addToCart({ product, quantity: 1 }));
   }, [dispatch, product]);
 
   const handleQuantityChange = useCallback((newQuantity: number) => {
     if (cartItem) {
-      dispatch(updateQuantity({ id: cartItem.id, quantity: newQuantity }));
+      dispatch(CartService.updateQuantity({ id: cartItem.id, quantity: newQuantity }));
     }
   }, [dispatch, cartItem]);
 

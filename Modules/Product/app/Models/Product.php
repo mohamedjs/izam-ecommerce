@@ -66,28 +66,8 @@ class Product extends Model
         return $this->stock > 0;
     }
 
-    public function isLowStock(): bool
-    {
-        return $this->stock <= 5;
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', true);
-    }
-
     public function scopeInStock($query)
     {
         return $query->where('stock', '>', 0);
     }
-
-    public function scopeOnSale($query)
-    {
-        return $query->whereNotNull('sale_price');
-    }
-} 
+}

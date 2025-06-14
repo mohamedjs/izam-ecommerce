@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => {
         ],
         resolve: {
             alias: {
-                '@/': path.resolve(__dirname, './resources/ts/src'),
-             
+                '@': path.resolve(__dirname, './resources/ts/src'),
+            }
         },
         optimizeDeps: {
             exclude: ['lucide-react'],

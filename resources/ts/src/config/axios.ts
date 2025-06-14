@@ -1,18 +1,21 @@
+import { store } from '@/store';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import Cookie from 'js-cookie';
 
 const axiosInstance = axios.create({
-  baseURL: 'http:localhost:8000/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+    baseURL: 'http://localhost:8000/api/',
+    timeout: 10000,
+    headers: {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+    }
 });
 
 // Request interceptor to add auth token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('authToken');
+    const token: string = store.getState().auth.token || Cookie.get('token') || '';
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -28,7 +31,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      Cookies.remove('authToken');
+      Cookie.remove('authToken');
       window.location.href = '/login';
     }
     return Promise.reject(error);

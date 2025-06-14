@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { setFilters, clearFilters } from '@/store/product/product.slice';
+import { setFilters } from '@/store/product/product.slice';
 import Button from '@/components/shared/Button/Button';
+import CategoryFilter from './CategoryFilter';
+import PriceFilter from './PriceFilter';
 import './ProductFilters.scss';
 
 interface ProductFiltersProps {
@@ -14,7 +16,7 @@ interface ProductFiltersProps {
 const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
   const { filters, categories } = useAppSelector((state) => state.product);
-  
+
   const [localFilters, setLocalFilters] = useState({
     category: filters.category || 'All',
     minPrice: filters.minPrice || 0,
@@ -44,8 +46,11 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
   const handleClearFilters = useCallback(() => {
     const resetFilters = { category: 'All', minPrice: 0, maxPrice: 300 };
     setLocalFilters(resetFilters);
-    dispatch(clearFilters());
+    dispatch(setFilters({}));
   }, [dispatch]);
+
+  const minPrice = 0;
+  const maxPrice = 300;
 
   if (!isOpen) return null;
 
@@ -62,93 +67,44 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
         <div className="filters__content">
           {/* Price Filter */}
           <div className="filter-section">
-            <button 
+            <button
               className="filter-section__header"
               onClick={() => setIsPriceExpanded(!isPriceExpanded)}
             >
               <span>Price</span>
               {isPriceExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </button>
-            
+
             {isPriceExpanded && (
               <div className="filter-section__content">
-                <div className="price-range">
-                  <div className="price-inputs">
-                    <div className="price-input">
-                      <label>Min</label>
-                      <input
-                        type="number"
-                        value={localFilters.minPrice}
-                        onChange={(e) => handlePriceChange('min', Number(e.target.value))}
-                        min="0"
-                        max="300"
-                      />
-                    </div>
-                    <div className="price-input">
-                      <label>Max</label>
-                      <input
-                        type="number"
-                        value={localFilters.maxPrice}
-                        onChange={(e) => handlePriceChange('max', Number(e.target.value))}
-                        min="0"
-                        max="300"
-                      />
-                    </div>
-                  </div>
-                  <div className="price-slider">
-                    <input
-                      type="range"
-                      min="0"
-                      max="300"
-                      value={localFilters.minPrice}
-                      onChange={(e) => handlePriceChange('min', Number(e.target.value))}
-                      className="slider"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="300"
-                      value={localFilters.maxPrice}
-                      onChange={(e) => handlePriceChange('max', Number(e.target.value))}
-                      className="slider"
-                    />
-                  </div>
-                  <div className="price-labels">
-                    <span>${localFilters.minPrice}</span>
-                    <span>${localFilters.maxPrice}</span>
-                  </div>
-                </div>
+                <PriceFilter
+                  min={minPrice}
+                  max={maxPrice}
+                  minValue={localFilters.minPrice}
+                  maxValue={localFilters.maxPrice}
+                  onChange={handlePriceChange}
+                />
               </div>
             )}
           </div>
 
           {/* Category Filter */}
           <div className="filter-section">
-            <button 
+            <button
               className="filter-section__header"
               onClick={() => setIsCategoryExpanded(!isCategoryExpanded)}
             >
               <span>Category</span>
               {isCategoryExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </button>
-            
+
             {isCategoryExpanded && (
               <div className="filter-section__content">
-                <div className="category-options">
-                  {categories.map((category) => (
-                    <label key={category} className="category-option">
-                      <input
-                        type="radio"
-                        name="category"
-                        value={category}
-                        checked={localFilters.category === category}
-                        onChange={() => handleCategoryChange(category)}
-                      />
-                      <span className="category-option__checkmark"></span>
-                      <span className="category-option__label">{category}</span>
-                    </label>
-                  ))}
-                </div>
+                <CategoryFilter
+                  categories={categories}
+                  selected={localFilters.category}
+                  onChange={handleCategoryChange}
+                />
               </div>
             )}
           </div>

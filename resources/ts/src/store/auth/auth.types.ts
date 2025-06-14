@@ -27,7 +27,7 @@ export interface SignupCredentials {
 
 export interface AuthResponse {
   token: string;
-  expires_at: number;
+  expire_at: number;
   user: User;
 }
 
@@ -38,5 +38,5 @@ export const loginSchema = yup.object().shape({
     .required('Email is required'),
   password: yup.string()
     .required('Password is required')
-    .min(8, 'Password must be at least 8 characters')
+    .min(6, 'Password must be at least 8 characters')
 });

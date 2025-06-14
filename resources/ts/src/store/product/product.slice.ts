@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { ProductState } from './product.types';
 import { ProductService } from './product.service';
-import { ProductState, ProductQuery, ProductFilters } from './product.types';
+import { ProductActions } from './product.actions';
 
 const initialState: ProductState = {
   products: [],
@@ -13,56 +14,25 @@ const initialState: ProductState = {
   categories: [],
 };
 
-export const fetchProductsAsync = createAsyncThunk(
-  'product/fetchProducts',
-  async (query: ProductQuery = {}) => {
-    return await ProductService.getProducts(query);
-  }
-);
-
-export const fetchCategoriesAsync = createAsyncThunk(
-  'product/fetchCategories',
-  async () => {
-    return await ProductService.getCategories();
-  }
-);
-
-const productSlice = createSlice({
+export const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    setFilters: (state, action: PayloadAction<ProductFilters>) => {
-      state.filters = action.payload;
-    },
-    clearFilters: (state) => {
-      state.filters = {};
-    },
-    setCurrentPage: (state, action: PayloadAction<number>) => {
-      state.currentPage = action.payload;
-    },
+    setProducts: ProductActions.setProducts,
+    setLoading: ProductActions.setLoading,
+    setError: ProductActions.setError,
+    setFilters: ProductActions.setFilters,
+    setCurrentPage: ProductActions.setCurrentPage,
+    setCategories: ProductActions.setCategories,
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProductsAsync.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchProductsAsync.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload.products;
-        state.filteredProducts = action.payload.products;
-        state.totalPages = action.payload.totalPages;
-        state.currentPage = action.payload.currentPage;
-      })
-      .addCase(fetchProductsAsync.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Failed to fetch products';
-      })
-      .addCase(fetchCategoriesAsync.fulfilled, (state, action) => {
-        state.categories = action.payload;
-      });
+      .addCase(ProductService.fetchProductsAsync.pending, ProductService.handleFetchProductsPending)
+      .addCase(ProductService.fetchProductsAsync.fulfilled, ProductService.handleFetchProductsFulfilled)
+      .addCase(ProductService.fetchProductsAsync.rejected, ProductService.handleFetchProductsRejected)
+      .addCase(ProductService.fetchCategoriesAsync.fulfilled, ProductService.handleFetchCategoriesFulfilled);
   },
 });
 
-export const { setFilters, clearFilters, setCurrentPage } = productSlice.actions;
+export const { setProducts, setLoading, setError, setFilters, setCurrentPage, setCategories } = productSlice.actions;
 export default productSlice.reducer;

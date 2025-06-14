@@ -18,19 +18,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["resources/ts/src/*"],
-      "@components/*": ["resources/ts/src/components/*"],
-      "@pages/*": ["resources/ts/src/pages/*"],
-      "@store/*": ["resources/ts/src/store/*"],
-      "@hooks/*": ["resources/ts/src/hooks/*"],
-      "@utils/*": ["resources/ts/src/utils/*"],
-      "@types/*": ["resources/ts/src/types/*"],
-      "@services/*": ["resources/ts/src/services/*"],
-      "@assets/*": ["resources/ts/src/assets/*"],
-      "@styles/*": ["resources/ts/src/styles/*"],
-      "@modules/*": ["Modules/*"],
-      "@product/*": ["Modules/Product/*"],
-      "@order/*": ["Modules/Order/*"],
-      "@user/*": ["Modules/User/*"]
     }
   },
   "include": ["resources/ts/src"],
