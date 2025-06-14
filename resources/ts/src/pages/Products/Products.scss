@@ -123,22 +123,26 @@
   color: #6b7280;
 }
 
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
+.pagination-numbers-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 4px;
 }
 
 .pagination-numbers {
   display: flex;
   gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  min-width: max-content;
 }
 
 .pagination-number {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,8 +151,10 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
+  flex-shrink: 0;
+  touch-action: manipulation;
 
   &:hover {
     background-color: #f9fafb;
@@ -159,6 +165,64 @@
     background-color: #000;
     color: white;
     border-color: #000;
+  }
+}
+
+.pagination-ellipsis {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+// Pagination row always single line, scrollable on mobile
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: nowrap;
+    margin-bottom: 32px;
+    @media (max-width: 640px) {
+      gap: 4px;
+      flex-wrap: nowrap;
+      padding: 0 2px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  .pagination-numbers-wrapper {
+    width: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 4px;
+  }
+
+  .pagination-numbers {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    min-width: max-content;
+  }
+
+
+@media (max-width: 640px) {
+  .pagination-numbers-wrapper {
+    max-width: 80vw;
+    margin: 0 2px;
+  }
+  .pagination-number, .pagination-ellipsis {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 15px;
   }
 }
 

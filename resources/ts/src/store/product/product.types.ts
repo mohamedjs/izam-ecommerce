@@ -29,6 +29,7 @@ export interface ProductState {
   error: string | null;
   currentPage: number;
   totalPages: number;
+  totalProducts: number;
   filters: ProductFilters;
   categories: string[];
 }

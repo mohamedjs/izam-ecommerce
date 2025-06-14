@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Requests\ProductRequest;
 use Modules\Product\Services\ProductService;
+use Modules\Product\Models\Category;
 
 class ProductController extends Controller
 {
@@ -21,7 +22,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->only(['category', 'price', 'search']);
+        $filters = $request->only(['category', 'price', 'search', 'page', 'limit']);
         return response()->json($this->productService->getAllProducts($filters));
     }
 
@@ -35,6 +36,15 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
         return response()->json($product);
+    }
+
+    /**
+     * Get all categories.
+     */
+    public function categories()
+    {
+        $categories = Category::all();
+        return response()->json($categories);
     }
 
 }

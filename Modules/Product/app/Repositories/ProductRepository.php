@@ -44,7 +44,7 @@ class ProductRepository implements ProductRepositoryInterface
                 }
             }
 
-            return $query->with('category')->paginate(10);
+            return $query->with('category')->paginate(request('limit'));
         });
     }
 

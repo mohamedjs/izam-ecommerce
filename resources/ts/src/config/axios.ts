@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 // Request interceptor to add auth token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token: string = store.getState().auth.token || Cookie.get('token') || '';
+    const token: string = store.getState().auth.token || Cookie.get('authToken') || '';
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

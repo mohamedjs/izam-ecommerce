@@ -24,4 +24,13 @@ export class ProductActions {
   static setCategories(state: ProductState, action: { payload: string[] }) {
     state.categories = action.payload;
   }
-} 
+
+  static setProductParams(state: ProductState, action: { payload: { page?: number; filters?: ProductFilters } }) {
+    if (action.payload.page !== undefined) {
+      state.currentPage = action.payload.page;
+    }
+    if (action.payload.filters !== undefined) {
+      state.filters = { ...state.filters, ...action.payload.filters };
+    }
+  }
+}

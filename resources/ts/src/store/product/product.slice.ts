@@ -10,6 +10,7 @@ const initialState: ProductState = {
   error: null,
   currentPage: 1,
   totalPages: 1,
+  totalProducts: 0,
   filters: {},
   categories: [],
 };
@@ -24,15 +25,16 @@ export const productSlice = createSlice({
     setFilters: ProductActions.setFilters,
     setCurrentPage: ProductActions.setCurrentPage,
     setCategories: ProductActions.setCategories,
+    setProductParams: ProductActions.setProductParams,
   },
   extraReducers: (builder) => {
     builder
       .addCase(ProductService.fetchProductsAsync.pending, ProductService.handleFetchProductsPending)
       .addCase(ProductService.fetchProductsAsync.fulfilled, ProductService.handleFetchProductsFulfilled)
       .addCase(ProductService.fetchProductsAsync.rejected, ProductService.handleFetchProductsRejected)
-      .addCase(ProductService.fetchCategoriesAsync.fulfilled, ProductService.handleFetchCategoriesFulfilled);
+      .addCase(ProductService.fetchCategoriesAsync.fulfilled, ProductService.handleFetchCategoriesFulfilled)
   },
 });
 
-export const { setProducts, setLoading, setError, setFilters, setCurrentPage, setCategories } = productSlice.actions;
+export const { setProducts, setLoading, setError, setFilters, setCurrentPage, setCategories, setProductParams } = productSlice.actions;
 export default productSlice.reducer;

@@ -14,7 +14,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
-  
+
   const cartItem = items.find(item => item.product.id === product.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
@@ -44,19 +44,19 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
           <div className="product-card__badge">{quantity}</div>
         )}
       </div>
-      
+
       <div className="product-card__content">
         <h3 className="product-card__name">{product.name}</h3>
-        <p className="product-card__category">{product.category}</p>
+        <p className="product-card__category">{product.category.name}</p>
         <div className="product-card__footer">
           <span className="product-card__price">${product.price}</span>
           <span className="product-card__stock">Stock: {product.stock}</span>
         </div>
-        
+
         {quantity === 0 ? (
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleAddToCart}
             className="product-card__add-btn"
           >
@@ -64,16 +64,16 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
           </Button>
         ) : (
           <div className="product-card__quantity">
-            <button 
-              className="quantity-btn" 
+            <button
+              className="quantity-btn"
               onClick={handleDecrement}
               disabled={quantity <= 0}
             >
               <Minus size={16} />
             </button>
             <span className="quantity-value">{quantity}</span>
-            <button 
-              className="quantity-btn" 
+            <button
+              className="quantity-btn"
               onClick={handleIncrement}
               disabled={quantity >= product.stock}
             >

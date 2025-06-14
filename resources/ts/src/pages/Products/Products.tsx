@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import { setFilters, setCurrentPage } from '@/store/product/product.slice';
+import { setFilters, setCurrentPage, setProductParams } from '@/store/product/product.slice';
 import SearchInput from '@/components/shared/SearchInput/SearchInput';
 import ProductCard from '@/components/Product/ProductCard/ProductCard';
 import ProductFilters from '@/components/Product/ProductFilters/ProductFilters';
@@ -9,37 +9,48 @@ import './Products.scss';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { ProductService } from '@/store/product/product.service';
-
+import { getPageNumbers, getProductDisplayRange } from '@/store/product/product.utils';
 
 const Products: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { products, loading, currentPage, totalPages, filters } = useAppSelector((state) => state.product);
+  const { products, loading, currentPage, totalPages, totalProducts, filters } = useAppSelector((state) => state.product);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
 
   useEffect(() => {
     dispatch(ProductService.fetchCategoriesAsync());
-  }, [dispatch]);
+  }, []);
 
+  // Debounce the product fetch effect
   useEffect(() => {
     dispatch(ProductService.fetchProductsAsync({
-      page: currentPage,
-      limit: 3,
-      filters
+        page: currentPage,
+        limit: 6,
+        filters
     }));
+
   }, [currentPage, filters]);
 
-  const handleSearch = useCallback((query: string) => {
-    dispatch(setFilters({ ...filters, search: query }));
-    dispatch(setCurrentPage(1));
-  }, [dispatch, filters]);
+  function handleSearch(query: string) {
+    dispatch(setProductParams({
+      filters: { search: query },
+      page: 1
+    }));
+  }
 
-  const handlePageChange = useCallback((page: number) => {
-    dispatch(setCurrentPage(page));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [dispatch]);
+  function handlePageChange(page: number) {
+    if (page > 0 && page <= totalPages) {
+      dispatch(setProductParams({ page }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
   const openFilters = () => setIsFiltersOpen(true);
   const closeFilters = () => setIsFiltersOpen(false);
+
+  const itemsPerPage = 6;
+  const { startIndex, endIndex } = getProductDisplayRange(currentPage, itemsPerPage, products.length, totalProducts);
+  const pageNumbers = getPageNumbers(currentPage, totalPages, 5);
 
   return (
     <div className="products-page">
@@ -65,7 +76,7 @@ const Products: React.FC = () => {
         <div className="products-title-section">
           <h1 className="products-title">Casual</h1>
           <p className="products-count">
-            Showing {((currentPage - 1) * 6) + 1}-{Math.min(currentPage * 6, products.length)} of {products.length} Products
+            Showing {products.length > 0 ? startIndex + 1 : 0}-{endIndex} of {totalProducts} Products
           </p>
         </div>
 
@@ -88,27 +99,35 @@ const Products: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="pagination">
+        {totalPages > 1 && (totalProducts > 0) && (
+          <nav className="pagination" aria-label="Product Pagination">
             <Button
               variant="ghost"
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage <= 1}
               icon={<ChevronLeft size={16} />}
+              aria-label="Previous Page"
             >
               Previous
             </Button>
 
-            <div className="pagination-numbers">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  className={`pagination-number ${currentPage === page ? 'active' : ''}`}
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </button>
-              ))}
+            <div className="pagination-numbers-wrapper">
+              <div className="pagination-numbers" style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 4px' }}>
+                {pageNumbers.map((page, index) => (
+                  page === '...'
+                    ? <span key={index} className="pagination-ellipsis" aria-hidden="true">...</span>
+                    : <button
+                        key={page}
+                        className={`pagination-number${currentPage === page ? ' active' : ''}`}
+                        onClick={() => handlePageChange(page as number)}
+                        aria-current={currentPage === page ? 'page' : undefined}
+                        aria-label={`Go to page ${page}`}
+                        style={{ minWidth: 40, minHeight: 40, fontSize: 16, borderRadius: 8 }}
+                      >
+                        {page}
+                      </button>
+                ))}
+              </div>
             </div>
 
             <Button
@@ -116,10 +135,11 @@ const Products: React.FC = () => {
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
               icon={<ChevronRight size={16} />}
+              aria-label="Next Page"
             >
               Next
             </Button>
-          </div>
+          </nav>
         )}
       </div>
 

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { setFilters } from '@/store/product/product.slice';
+import { setFilters, setProductParams } from '@/store/product/product.slice';
 import Button from '@/components/shared/Button/Button';
 import CategoryFilter from './CategoryFilter';
 import PriceFilter from './PriceFilter';
@@ -35,10 +35,13 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
   }, []);
 
   const handleApplyFilters = useCallback(() => {
-    dispatch(setFilters({
-      category: localFilters.category === 'All' ? undefined : localFilters.category,
-      minPrice: localFilters.minPrice,
-      maxPrice: localFilters.maxPrice,
+    dispatch(setProductParams({
+      filters: {
+        category: localFilters.category === 'All' ? undefined : localFilters.category,
+        minPrice: localFilters.minPrice,
+        maxPrice: localFilters.maxPrice,
+      },
+      page: 1
     }));
     onClose();
   }, [dispatch, localFilters, onClose]);
@@ -46,7 +49,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
   const handleClearFilters = useCallback(() => {
     const resetFilters = { category: 'All', minPrice: 0, maxPrice: 300 };
     setLocalFilters(resetFilters);
-    dispatch(setFilters({}));
+    dispatch(setProductParams({ filters: {}, page: 1 }));
   }, [dispatch]);
 
   const minPrice = 0;

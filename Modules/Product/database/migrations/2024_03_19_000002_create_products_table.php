@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->string('main_image');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,4 +26,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('products');
     }
-}; 
+};
