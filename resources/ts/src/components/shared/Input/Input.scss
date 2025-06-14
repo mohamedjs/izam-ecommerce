@@ -31,7 +31,7 @@
 
   &--error {
     border-color: #ef4444;
-    
+
     &:focus {
       border-color: #ef4444;
       box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
@@ -50,7 +50,7 @@
 .input-icon {
   position: absolute;
   right: 16px;
-  top: 50%;
+  top: 62%;
   transform: translateY(-50%);
   color: #6b7280;
   cursor: pointer;

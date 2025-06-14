@@ -20,7 +20,7 @@
   a {
     color: #6b7280;
     text-decoration: none;
-    
+
     &:hover {
       color: #111827;
     }
@@ -35,14 +35,14 @@
 .cart-empty {
   text-align: center;
   padding: 64px 16px;
-  
+
   h1 {
     font-size: 32px;
     font-weight: 700;
     margin: 0 0 8px 0;
     color: #111827;
   }
-  
+
   p {
     color: #6b7280;
     margin: 0 0 24px 0;
@@ -82,7 +82,7 @@
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+}CartUtils
 
 .cart-item-image {
   flex-shrink: 0;

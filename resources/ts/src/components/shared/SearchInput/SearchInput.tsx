@@ -1,21 +1,24 @@
 import React, { useState, useCallback } from 'react';
-import { Search } from 'lucide-react';
+import { Filter, Search } from 'lucide-react';
 import Input from '../Input/Input';
 import './SearchInput.scss';
+import useWindowSize from '@/hooks/useWindowSize';
 
 interface SearchInputProps {
   placeholder?: string;
   onSearch: (query: string) => void;
+  onFilter: () => void;
   className?: string;
 }
 
-const SearchInput: React.FC<SearchInputProps> = React.memo(({ 
-  placeholder = "Search by product name", 
-  onSearch, 
-  className = '' 
+const SearchInput: React.FC<SearchInputProps> = React.memo(({
+  placeholder = "Search by product name",
+  onSearch,
+  onFilter,
+  className = ''
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-
+  const {width} = useWindowSize()
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -29,7 +32,7 @@ const SearchInput: React.FC<SearchInputProps> = React.memo(({
         placeholder={placeholder}
         value={searchTerm}
         onChange={handleInputChange}
-        icon={<Search size={20} />}
+        icon={width < 765 && <Filter onClick={onFilter} size={25} />}
       />
     </div>
   );

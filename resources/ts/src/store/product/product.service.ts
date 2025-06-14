@@ -1,6 +1,6 @@
 import axiosInstance from '@/config/axios';
 import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Product, ProductQuery, ProductState, ProductFilters } from './product.types';
+import { ProductQuery, ProductState } from './product.types';
 
 export class ProductService {
   static fetchProductsAsync = createAsyncThunk(
@@ -8,7 +8,7 @@ export class ProductService {
     async (query: ProductQuery = {}) => {
       const params: any = {
         page: query.page || 1,
-        limit: query.limit || 6,
+        limit: query.limit || 12,
         ...query.filters,
       };
       const response = await axiosInstance.get('/v1/products', { params });

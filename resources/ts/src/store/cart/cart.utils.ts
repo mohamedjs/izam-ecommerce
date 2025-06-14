@@ -18,4 +18,13 @@ export class CartUtils {
   static generateOrderId(): string {
     return Math.floor(Math.random() * 10000).toString();
   }
+
+  static getCartFromStateOrStorage(stateItems: any) {
+    if (stateItems && stateItems.length > 0) return stateItems;
+    try {
+      const local = localStorage.getItem('cart');
+      if (local) return JSON.parse(local);
+    } catch {}
+    return [];
+  }
 }

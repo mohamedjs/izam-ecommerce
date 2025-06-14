@@ -34,7 +34,6 @@ class ProductRepository implements ProductRepositoryInterface
     public function all(array $filters = []): Collection|LengthAwarePaginator
     {
         $cacheKey = $this->generateCacheKey($filters);
-
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($filters) {
             $query = $this->model->query();
 
@@ -44,7 +43,7 @@ class ProductRepository implements ProductRepositoryInterface
                 }
             }
 
-            return $query->with('category')->paginate(request('limit'));
+            return $query->with('category')->paginate(request()->get('limit'));
         });
     }
 

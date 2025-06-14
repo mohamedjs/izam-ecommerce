@@ -4,9 +4,15 @@
 }
 
 .products-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 24px 16px;
+  display: flex;
+  gap: 32px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 }
 
 .breadcrumb {
@@ -123,11 +129,37 @@
   color: #6b7280;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  margin-bottom: 32px;
+
+  .btn-prev {
+    padding: 0;
+  }
+
+  @media (max-width: 640px) {
+    gap: 4px;
+    flex-wrap: nowrap;
+    padding: 0 2px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 .pagination-numbers-wrapper {
-  width: 100%;
+  width: auto;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 0 4px;
+
+  @media (max-width: 640px) {
+    max-width: 80vw;
+    margin: 0 2px;
+  }
 }
 
 .pagination-numbers {
@@ -166,6 +198,14 @@
     color: white;
     border-color: #000;
   }
+
+  @media (max-width: 640px) {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 15px;
+  }
 }
 
 .pagination-ellipsis {
@@ -177,47 +217,8 @@
   font-size: 16px;
   color: #6b7280;
   flex-shrink: 0;
-}
 
-// Pagination row always single line, scrollable on mobile
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: nowrap;
-    margin-bottom: 32px;
-    @media (max-width: 640px) {
-      gap: 4px;
-      flex-wrap: nowrap;
-      padding: 0 2px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  .pagination-numbers-wrapper {
-    width: auto;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: 0 4px;
-  }
-
-  .pagination-numbers {
-    display: flex;
-    gap: 8px;
-    flex-wrap: nowrap;
-    justify-content: center;
-    min-width: max-content;
-  }
-
-
-@media (max-width: 640px) {
-  .pagination-numbers-wrapper {
-    max-width: 80vw;
-    margin: 0 2px;
-  }
-  .pagination-number, .pagination-ellipsis {
+  @media (max-width: 640px) {
     width: 40px;
     height: 40px;
     min-width: 40px;

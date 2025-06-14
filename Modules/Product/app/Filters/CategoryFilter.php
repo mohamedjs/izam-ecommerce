@@ -8,6 +8,8 @@ class CategoryFilter implements FilterInterface
 {
     public function apply(Builder $query, $value): Builder
     {
-        return $query->where('category_id', $value);
+        return $query->whereHas('category', function($q) use ($value) {
+            $q->where('name', 'like', '%' . $value . '%');
+        });
     }
-} 
+}

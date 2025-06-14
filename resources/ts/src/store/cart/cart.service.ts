@@ -7,7 +7,20 @@ export class CartService {
     'cart/addToCart',
     async (payload: AddToCartPayload, thunkApi) => {
       try {
-        // In a real app, this would be an API call
+        const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        const existingItem = cartItems.find((item: any) => item.product.id === payload.product.id);
+
+        if (existingItem) {
+          existingItem.quantity += payload.quantity;
+        } else {
+          cartItems.push({
+            id: `${payload.product.id}-${Date.now()}`,
+            product: payload.product,
+            quantity: payload.quantity
+          });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cartItems));
         return payload;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);
@@ -19,7 +32,9 @@ export class CartService {
     'cart/removeFromCart',
     async (id: string, thunkApi) => {
       try {
-        // In a real app, this would be an API call
+        const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        const updatedItems = cartItems.filter((item: any) => item.id !== id);
+        localStorage.setItem('cart', JSON.stringify(updatedItems));
         return id;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);
@@ -31,7 +46,17 @@ export class CartService {
     'cart/updateQuantity',
     async (payload: UpdateQuantityPayload, thunkApi) => {
       try {
-        // In a real app, this would be an API call
+        const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        const itemIndex = cartItems.findIndex((item: any) => item.id === payload.id);
+
+        if (itemIndex !== -1) {
+          if (payload.quantity <= 0) {
+            cartItems.splice(itemIndex, 1);
+          } else {
+            cartItems[itemIndex].quantity = payload.quantity;
+          }
+          localStorage.setItem('cart', JSON.stringify(cartItems));
+        }
         return payload;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);
@@ -43,7 +68,7 @@ export class CartService {
     'cart/clearCart',
     async (_, thunkApi) => {
       try {
-        // In a real app, this would be an API call
+        localStorage.removeItem('cart');
         return true;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);
@@ -85,7 +110,7 @@ export class CartService {
   static handleUpdateQuantityFulfilled(state: CartState, action: PayloadAction<UpdateQuantityPayload>) {
     const { id, quantity } = action.payload;
     const item = state.items.find(item => item.id === id);
-    
+
     if (item) {
       if (quantity <= 0) {
         state.items = state.items.filter(item => item.id !== id);
@@ -98,4 +123,4 @@ export class CartService {
   static handleClearCartFulfilled(state: CartState) {
     state.items = [];
   }
-} 
+}
