@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["resources/ts/src/*"],
+      "@components/*": ["resources/ts/src/components/*"],
+      "@pages/*": ["resources/ts/src/pages/*"],
+      "@store/*": ["resources/ts/src/store/*"],
+      "@hooks/*": ["resources/ts/src/hooks/*"],
+      "@utils/*": ["resources/ts/src/utils/*"],
+      "@types/*": ["resources/ts/src/types/*"],
+      "@services/*": ["resources/ts/src/services/*"],
+      "@assets/*": ["resources/ts/src/assets/*"],
+      "@styles/*": ["resources/ts/src/styles/*"],
+      "@modules/*": ["Modules/*"],
+      "@product/*": ["Modules/Product/*"],
+      "@order/*": ["Modules/Order/*"],
+      "@user/*": ["Modules/User/*"]
+    }
+  },
+  "include": ["resources/ts/src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+} 
