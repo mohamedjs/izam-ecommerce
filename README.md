@@ -13,6 +13,7 @@ This is a modular e-commerce platform built with Laravel and React, utilizing Do
   - [Installation](#installation)
   - [Environment Variables](#environment-variables)
   - [Running the Application](#running-the-application)
+- [Manual Installation (without Docker)](#manual-installation-without-docker)
 - [Architecture](#architecture)
   - [Backend (Laravel Modules)](#backend-laravel-modules)
   - [Frontend (React Application)](#frontend-react-application)
@@ -110,8 +111,76 @@ Make sure to configure them according to your needs. Examples are provided in `.
 
 Access the application in your browser:
 
--   **Frontend:** `http://localhost:8000` (or `APP_PORT` if changed)
+-   **Application:** `http://localhost:8000` (or `APP_PORT` if changed)
 -   **phpMyAdmin:** `http://localhost:9090` (or `PHPMYADMIN_PORT` if changed)
+
+## Manual Installation (without Docker)
+
+If you prefer to run the application directly on your host machine without Docker, follow these steps. Ensure you have PHP (8.2+), Composer, Node.js, NPM, MySQL, and Redis installed and configured.
+
+### Prerequisites (Manual Installation)
+
+-   [PHP](https://www.php.net/downloads.php) (8.2 or higher)
+-   [Composer](https://getcomposer.org/download/)
+-   [Node.js](https://nodejs.org/en/download/) (LTS version) and NPM
+-   [MySQL Server](https://dev.mysql.com/downloads/mysql/)
+-   [Redis Server](https://redis.io/docs/getting-started/installation/)
+
+### Installation Steps (Manual)
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd izam-ecommerce
+    ```
+
+2.  **Create environment file:**
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **Configure `.env`:**
+    -   Update `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` to match your local MySQL setup.
+    -   Ensure `REDIS_HOST`, `REDIS_PASSWORD`, and `REDIS_PORT` are configured for your local Redis instance.
+    -   Set `CACHE_DRIVER=redis` and `QUEUE_CONNECTION=redis` to utilize Redis for caching and queues, as intended by the application architecture.
+    -   Set `APP_URL` and `VITE_API_URL` to match your local serving address (e.g., `http://localhost:8000`).
+
+4.  **Generate Application Key:**
+    ```bash
+    php artisan key:generate
+    ```
+
+5.  **Install PHP Dependencies:**
+    ```bash
+    composer install
+    ```
+
+6.  **Run Migrations and Seeders:**
+    ```bash
+    php artisan migrate --seed
+    ```
+
+7.  **Install Node.js Dependencies:**
+    ```bash
+    npm install
+    ```
+
+8.  **Build Frontend Assets:**
+    ```bash
+    npm run build
+    ```
+
+9.  **Serve the Laravel Application:**
+    ```bash
+    php artisan serve
+    ```
+
+10. **Start the Frontend Development Server (for development):**
+    If you are developing, you will also need to start the Vite development server:
+    ```bash
+    npm run dev
+    ```
+    Access the application at `http://localhost:5173` (or your configured Vite port).
 
 ## Architecture
 
