@@ -16,7 +16,7 @@ const CartItems: React.FC<CartItemsProps> = ({ items, onRemove, onUpdateQuantity
       {items.map((item) => (
         <div key={item.id} className="cart-item">
           <div className="cart-item-image">
-            <img src={item.product.image} alt={item.product.name} />
+            <img src={item.product.main_image} alt={item.product.name} />
           </div>
 
           <div className="cart-item-details">

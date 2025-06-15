@@ -28,7 +28,7 @@ const OrderSummary: React.FC = () => {
         {items.length === 0 && <div className="order-summary-empty">Cart is empty</div>}
         {items.map(item => (
           <div key={item.id} className="order-summary-item">
-            <img src={item.product.image} alt={item.product.name} width={40} height={40} />
+            <img src={item.product.main_image} alt={item.product.name} width={40} height={40} />
             <div className="order-summary-item-info">
               <div className="order-summary-item-name">{item.product.name}</div>
               <div className="order-summary-item-controls">

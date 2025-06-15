@@ -13,6 +13,7 @@ const initialState: ProductState = {
   totalProducts: 0,
   filters: {},
   categories: [],
+  priceRangeData:null
 };
 
 export const productSlice = createSlice({

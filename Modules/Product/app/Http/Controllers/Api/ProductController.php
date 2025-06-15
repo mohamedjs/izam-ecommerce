@@ -19,7 +19,12 @@ class ProductController extends BaseAPIController
      */
     public function index(Request $request)
     {
-        $filters = $request->only(['category', 'price', 'search', 'page', 'limit']);
+        $filters = $request->only(['category', 'search', 'page', 'limit']);
+        $filters['price'] = [
+            'min' => $request->get('minPrice'),
+            'max' => $request->get('maxPrice')
+        ];
+        // dd($filters);
         return $this->OK($this->productService->getAllProducts($filters));
     }
 

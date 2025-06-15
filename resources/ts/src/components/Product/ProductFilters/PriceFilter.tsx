@@ -8,25 +8,26 @@ interface PriceFilterProps {
 }
 
 const PriceFilter: React.FC<PriceFilterProps> = React.memo(({ min, max, value, onChange }) => {
-  const handleMinChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMin = Math.min(Number(e.target.value), value[1]);
-    onChange([newMin, value[1]]);
-  }, [onChange, value]);
 
-  const handleMaxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMax = Math.max(Number(e.target.value), value[0]);
-    onChange([value[0], newMax]);
-  }, [onChange, value]);
+    const handleMinChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const newMin = Math.min(Number(e.target.value), value[1]);
+        onChange([newMin, value[1]]);
+    }, [onChange, value]);
 
-  const handleSliderMin = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMin = Math.min(Number(e.target.value), value[1]);
-    onChange([newMin, value[1]]);
-  }, [onChange, value]);
+    const handleMaxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const newMax = Math.max(Number(e.target.value), value[0]);
+        onChange([value[0], newMax]);
+    }, [onChange, value]);
 
-  const handleSliderMax = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMax = Math.max(Number(e.target.value), value[0]);
-    onChange([value[0], newMax]);
-  }, [onChange, value]);
+    const handleSliderMin = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const newMin = Math.min(Number(e.target.value), value[1]);
+        onChange([newMin, value[1]]);
+    }, [onChange, value]);
+
+    const handleSliderMax = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const newMax = Math.max(Number(e.target.value), value[0]);
+        onChange([value[0], newMax]);
+    }, [onChange, value]);
 
   return (
     <div className="price-range">

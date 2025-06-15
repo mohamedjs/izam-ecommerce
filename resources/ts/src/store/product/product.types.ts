@@ -32,6 +32,12 @@ export interface ProductState {
   totalProducts: number;
   filters: ProductFilters;
   categories: Category[];
+  priceRangeData: PriceRange | null
+}
+
+export interface PriceRange {
+    min: number;
+    max:number
 }
 
 export interface Category {

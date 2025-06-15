@@ -24,7 +24,7 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const { control, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
     resolver: yupResolver(loginSchema),
-     mode: "all",
+    mode: "all",
     defaultValues: {
       email: '',
       password: ''
@@ -33,7 +33,6 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-
         navigate('/products');
     }
   }, [isAuthenticated, navigate]);
@@ -118,14 +117,10 @@ const Login: React.FC = () => {
             </Button>
           </form>
 
-          <p className="login-signup">
-            Don't have an account? <Link to="/signup">Sign up</Link>
-          </p>
-
           <div className="login-demo">
             <p>Demo credentials:</p>
-            <p>Email: user@example.com</p>
-            <p>Password: password</p>
+            <p>Email: admin@izam.com</p>
+            <p>Password: 123456</p>
           </div>
         </div>
       </div>

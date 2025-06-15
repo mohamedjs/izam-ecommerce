@@ -15,7 +15,7 @@ import ProductPagination from '@/components/Product/ProductPagination';
 
 const Products: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { products, loading, currentPage, totalPages, totalProducts, filters } = useAppSelector((state) => state.product);
+  const { products, loading, currentPage, totalPages, totalProducts, filters, priceRangeData } = useAppSelector((state) => state.product);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const { width } = useWindowSize();
 
@@ -92,7 +92,7 @@ const Products: React.FC = () => {
         </div>
       </div>
 
-      <ProductFilters isOpen={isFiltersOpen} onClose={closeFilters} />
+      {!!priceRangeData && <ProductFilters isOpen={isFiltersOpen} onClose={closeFilters} />}
     </div>
   );
 };

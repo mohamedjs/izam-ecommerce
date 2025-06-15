@@ -16,4 +16,4 @@ class PriceFilter implements FilterInterface
         }
         return $query;
     }
-} 
+}

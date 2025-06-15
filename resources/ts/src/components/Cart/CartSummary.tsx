@@ -51,14 +51,14 @@ const CartSummary: React.FC<CartSummaryProps> = ({ items, summary, orderId }) =>
       </div>
 
       <Button
-     variant="primary"
-     size="lg"
-     className="checkout-btn"
-     disabled={items.length === 0 || loading}
-     onClick={handlePlaceOrder}
-   >
-     {loading ? 'Placing Order...' : 'Place the order'}
-   </Button>
+        variant="primary"
+        size="lg"
+        className="checkout-btn"
+        disabled={items.length === 0 || loading}
+        onClick={handlePlaceOrder}
+    >
+        {loading ? 'Placing Order...' : 'Place the order'}
+    </Button>
     </div>
   );
 };

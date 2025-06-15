@@ -1,6 +1,6 @@
 import axiosInstance from '@/config/axios';
 import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Category, Product, ProductQuery, ProductState } from './product.types';
+import { Category, PriceRange, Product, ProductQuery, ProductState } from './product.types';
 
 export class ProductService {
   static fetchProductsAsync = createAsyncThunk(
@@ -18,6 +18,7 @@ export class ProductService {
             currentPage: response.data.data.products.current_page,
             totalProducts: response.data.data.products.total,
             categories: response.data.data.categories,
+            priceRange: response.data.data.price_range,
         };
     }
   );
@@ -33,6 +34,7 @@ export class ProductService {
     currentPage: number;
     totalProducts: number;
     categories: Category[];
+    priceRange: PriceRange
   }>) {
     state.loading = false;
     state.products = action.payload.products;
@@ -41,6 +43,7 @@ export class ProductService {
     state.currentPage = action.payload.currentPage;
     state.totalProducts = action.payload.totalProducts;
     state.categories = action.payload.categories
+    state.priceRangeData = action.payload.priceRange
   }
 
   static handleFetchProductsRejected(state: ProductState, action: PayloadAction<any>) {

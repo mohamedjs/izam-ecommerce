@@ -25,9 +25,18 @@ class ProductService
         $category = cache()->remember('categories', 60 * 60 * 24, function () {
             return Category::all();
         });
+
+        $priceRange = cache()->remember('price_range', 60 * 60 * 24, function () {
+            return [
+                'min' => Product::min('price'),
+                'max' => Product::max('price')
+            ];
+        });
+
         return [
             'products' => new ProductCollection($this->productRepository->all($filters)),
-            'categories' => CategoryResource::collection($category)
+            'categories' => CategoryResource::collection($category),
+            'price_range' => $priceRange
         ];
     }
 
