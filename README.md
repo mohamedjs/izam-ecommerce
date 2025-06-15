@@ -24,7 +24,7 @@ This is a modular e-commerce platform built with Laravel and React, utilizing Do
 
 This platform provides core e-commerce functionalities, including:
 
--   **User Management:** Secure authentication (login) and user profiles.
+-   **User Management:** Secure authentication (login).
 -   **Product Catalog:** Browse products, apply filters (category, price range, search).
 -   **Shopping Cart:** Add, update, and remove products from the cart.
 -   **Order Management:** Place orders and view order history.
