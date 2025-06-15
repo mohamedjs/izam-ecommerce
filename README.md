@@ -16,6 +16,7 @@ This is a modular e-commerce platform built with Laravel and React, utilizing Do
 - [Architecture](#architecture)
   - [Backend (Laravel Modules)](#backend-laravel-modules)
   - [Frontend (React Application)](#frontend-react-application)
+- [DevOps Environment](#devops-environment)
 - [Logging](#logging)
 
 ## Features
@@ -204,6 +205,74 @@ The API endpoints are versioned and prefixed with `/api/v1`.
 
 -   `POST /api/v1/orders`: Create a new order (requires authentication).
 
+## DevOps Environment
+
+The `docker-compose.yml` file defines and orchestrates the multi-container Docker environment for the Izam E-commerce platform. It sets up essential services like Nginx, PHP-FPM, MySQL, Redis, and phpMyAdmin, ensuring a robust and reproducible development environment.
+
+### Services Overview:
+
+-   **`nginx`:** (defined in `devops/docker-compose.yml`, image `nginx:latest`, custom `devops/nginx/Dockerfile`, config `devops/nginx/config/default.conf`)
+    -   Acts as the primary web server, handling incoming HTTP requests.
+    -   Serves static frontend assets (from `public/build`, etc.) and proxies API requests to the `php` service.
+    -   Crucially, during development, it proxies requests for Vite's hot-reloading (`/@vite/`) and frontend assets (`/resources/.*\.js$`) directly to the `php` container, which is configured to run the Vite development server.
+    -   Communicates with the `php` service over the `izam` network.
+
+-   **`php`:** (defined in `devops/docker-compose.yml`, custom `devops/php/Dockerfile`, image `php:8.2-fpm`, config `devops/php/www.conf` and `devops/php/supervisord.conf`)
+    -   The core application container for the Laravel backend.
+    -   Runs `php-fpm` to process PHP requests received from Nginx.
+    -   Uses `supervisor` to manage background processes, including the Laravel queue worker (`artisan queue:work redis`).
+    -   The `APP_PATH` (`./`) and `APP_DOCUMENT_ROOT` (`/var/www/html/app`) volumes map your local project directory into the container, allowing for live code changes.
+    -   During frontend development, this container also hosts the Vite development server, which Nginx proxies to.
+    -   Communicates with `redis` and `db` services over the `izam` network.
+
+-   **`redis`:** (defined in `devops/docker-compose.yml`, image `redis:latest`, config `devops/redis/redis.conf`)
+    -   Provides an in-memory data store used by Laravel for caching and as a queue driver.
+    -   Data persistence is handled via a Docker volume (`redis_data`).
+    -   Accessible by the `php` service over the `izam` network.
+
+-   **`db`:** (defined in `devops/docker-compose.yml`, image `mysql:8.0.32`)
+    -   The MySQL database server where all application data is stored.
+    -   Data persistence is handled via a Docker volume (`dbdata`).
+    -   Accessible by the `php` and `phpmyadmin` services over the `izam` network.
+
+-   **`phpmyadmin`:** (defined in `devops/docker-compose.yml`, image `phpmyadmin/phpmyadmin`)
+    -   A web-based interface for managing the MySQL database.
+    -   Links directly to the `db` service for database connectivity.
+
+### Internal Communication:
+
+All services are interconnected via a custom Docker bridge network named `izam`. This network allows containers to communicate with each other using their service names as hostnames (e.g., `php` can access the database at `db:3306`). The `depends_on` directive in `docker-compose.yml` ensures that services start in the correct order, establishing dependencies between them.
+
+For example:
+-   `nginx` forwards PHP requests to `php:9000`.
+-   `php` connects to the database at `db:3306` and Redis at `redis:6379`.
+-   `phpmyadmin` connects to the database at `db:3306`.
+
+### Accessing Docker Services (CLI)
+
+You can access the shell of each running Docker service using `docker compose exec`:
+
+-   **PHP Service:**
+    ```bash
+    docker compose exec php bash
+    ```
+
+-   **Redis Service:**
+    ```bash
+    docker compose exec redis bash
+    ```
+
+-   **Database Service (MySQL):**
+    ```bash
+    docker compose exec db bash
+    ```
+
+-   **Nginx Service:**
+    ```bash
+    docker compose exec nginx bash
+    ```
+
+This setup provides a consistent and isolated development environment, mimicking a production setup while offering ease of management and rapid iteration capabilities.
 
 ## Logging
 
