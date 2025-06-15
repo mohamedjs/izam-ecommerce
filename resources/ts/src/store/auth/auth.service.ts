@@ -10,7 +10,7 @@ export class AuthService {
         async (credentials: LoginCredentials, thunkApi) => {
             try {
                 const response = await axiosInstance.post('/v1/login', credentials)
-                return response.data;
+                return response.data.data;
             } catch (err: any) {
                 return thunkApi.rejectWithValue(err)
             }

@@ -7,11 +7,9 @@ use Modules\User\Repositories\UserRepositoryInterface;
 
 class UserService
 {
-    protected $userRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(protected UserRepositoryInterface $userRepository)
     {
-        $this->userRepository = $userRepository;
     }
 
     public function authenticate(string $email, string $password)

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\User\Models\User;
+use Modules\Product\Models\Product;
 
 class Order extends Model
 {
@@ -41,4 +42,4 @@ class Order extends Model
             ->withPivot('quantity')
             ->withTimestamps();
     }
-} 
+}

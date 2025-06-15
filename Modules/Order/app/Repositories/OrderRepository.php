@@ -8,11 +8,9 @@ use Modules\Order\Models\Order;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    protected $model;
 
-    public function __construct(Order $model)
+    public function __construct(private Order $model)
     {
-        $this->model = $model;
     }
 
     public function all(array $filters = []): Collection|LengthAwarePaginator
@@ -34,9 +32,13 @@ class OrderRepository implements OrderRepositoryInterface
     public function create(array $data): Order
     {
         $order = $this->model->create($data);
-        
+
         if (isset($data['products'])) {
-            $order->products()->attach($data['products']);
+            $order->products()->attach(
+                collect($data['products'])->mapWithKeys(function ($product) {
+                    return [$product['id'] => ['quantity' => $product['quantity']]];
+                })->all()
+            );
         }
 
         return $order->load(['user', 'products']);
@@ -47,9 +49,13 @@ class OrderRepository implements OrderRepositoryInterface
         $order = $this->find($id);
         if ($order) {
             $order->update($data);
-            
+
             if (isset($data['products'])) {
-                $order->products()->sync($data['products']);
+                $order->products()->sync(
+                    collect($data['products'])->mapWithKeys(function ($product) {
+                        return [$product['id'] => ['quantity' => $product['quantity']]];
+                    })->all()
+                );
             }
 
             return $order->load(['user', 'products']);
@@ -81,4 +87,4 @@ class OrderRepository implements OrderRepositoryInterface
         $random = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
         return $prefix . $timestamp . $random;
     }
-} 
+}

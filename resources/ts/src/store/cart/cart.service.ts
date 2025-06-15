@@ -1,6 +1,7 @@
 import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { CartState, AddToCartPayload, UpdateQuantityPayload } from './cart.types';
+import { CartState, AddToCartPayload, UpdateQuantityPayload, CartItem } from './cart.types';
 import Cookie from 'js-cookie';
+import axiosInstance from '@/config/axios';
 
 export class CartService {
   static addToCart = createAsyncThunk(
@@ -22,8 +23,11 @@ export class CartService {
 
         Cookie.set('cart', JSON.stringify(cartItems));
         return payload;
-      } catch (err: any) {
-        return thunkApi.rejectWithValue(err);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          return thunkApi.rejectWithValue(err.message);
+        }
+        return thunkApi.rejectWithValue('Failed to add to cart');
       }
     }
   );
@@ -36,8 +40,11 @@ export class CartService {
         const updatedItems = cartItems.filter((item: any) => item.id !== id);
         Cookie.set('cart', JSON.stringify(updatedItems));
         return id;
-      } catch (err: any) {
-        return thunkApi.rejectWithValue(err);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          return thunkApi.rejectWithValue(err.message);
+        }
+        return thunkApi.rejectWithValue('Failed to remove from cart');
       }
     }
   );
@@ -58,8 +65,11 @@ export class CartService {
           Cookie.set('cart', JSON.stringify(cartItems));
         }
         return payload;
-      } catch (err: any) {
-        return thunkApi.rejectWithValue(err);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          return thunkApi.rejectWithValue(err.message);
+        }
+        return thunkApi.rejectWithValue('Failed to update quantity');
       }
     }
   );
@@ -70,8 +80,32 @@ export class CartService {
       try {
         Cookie.remove('cart');
         return true;
-      } catch (err: any) {
-        return thunkApi.rejectWithValue(err);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          return thunkApi.rejectWithValue(err.message);
+        }
+        return thunkApi.rejectWithValue('Failed to clear cart');
+      }
+    }
+  );
+
+  static placeOrder = createAsyncThunk(
+    'cart/placeOrder',
+    async (items: CartItem[], thunkApi) => {
+      try {
+        const products = items.map(item => ({
+            quantity: item.quantity,
+            ...item.product
+        }));
+        await axiosInstance.post('/v1/orders', { products });
+        thunkApi.dispatch(CartService.clearCart());
+        return true;
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          return thunkApi.rejectWithValue(err.message);
+        } else {
+          return thunkApi.rejectWithValue('Failed to place order');
+        }
       }
     }
   );

@@ -10,11 +10,8 @@ use Modules\Order\Repositories\OrderRepositoryInterface;
 
 class OrderService
 {
-    protected $orderRepository;
-
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    public function __construct(protected OrderRepositoryInterface $orderRepository)
     {
-        $this->orderRepository = $orderRepository;
     }
 
     public function getAllOrders(array $filters = []): Collection|LengthAwarePaginator
@@ -30,12 +27,12 @@ class OrderService
     public function createOrder(array $data): Order
     {
         $data['order_number'] = $this->orderRepository->generateOrderNumber();
-        
+
         $order = $this->orderRepository->create($data);
-        
+
         // Dispatch event for order logging
         event(new OrderCreated($order));
-        
+
         return $order;
     }
 
@@ -79,4 +76,4 @@ class OrderService
             'product_count' => $productCount,
         ];
     }
-} 
+}

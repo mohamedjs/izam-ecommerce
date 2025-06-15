@@ -10,11 +10,8 @@ use Modules\Product\Models\Category;
 
 class ProductController extends BaseAPIController
 {
-    protected $productService;
-
-    public function __construct(ProductService $productService)
+    public function __construct(protected ProductService $productService)
     {
-        $this->productService = $productService;
     }
 
     /**

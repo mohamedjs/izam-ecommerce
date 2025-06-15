@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   return (
     <div className="product-card">
       <div className="product-card__image">
-        <img src={product.image} alt={product.name} />
+        <img src={product.main_image} alt={product.name} />
         {quantity > 0 && (
           <div className="product-card__badge">{quantity}</div>
         )}

@@ -6,11 +6,9 @@ use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface
 {
-    protected $model;
 
-    public function __construct(User $model)
+    public function __construct(protected User $model)
     {
-        $this->model = $model;
     }
 
     public function findByEmail(string $email)

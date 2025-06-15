@@ -9,11 +9,8 @@ use Modules\Order\Services\OrderService;
 
 class OrderController extends Controller
 {
-    protected $orderService;
-
-    public function __construct(OrderService $orderService)
+    public function __construct(protected OrderService $orderService)
     {
-        $this->orderService = $orderService;
     }
 
     public function index(Request $request)
@@ -26,7 +23,7 @@ class OrderController extends Controller
     {
         $products = $request->input('products', []);
         $totals = $this->orderService->calculateOrderTotals($products);
-        
+
         $orderData = array_merge([
             'user_id' => $request->user()->id,
             'products' => $products
@@ -68,4 +65,4 @@ class OrderController extends Controller
         $orders = $this->orderService->getUserOrders($request->user()->id);
         return response()->json($orders);
     }
-} 
+}

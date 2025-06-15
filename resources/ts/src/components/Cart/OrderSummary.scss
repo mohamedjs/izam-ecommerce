@@ -112,9 +112,14 @@
     margin-top: 20px;
   }
 }
-
+.cart-summary {
+    width: 100% !important;
+    max-width: 100% !important;
+}
 @media (max-width: 900px) {
-  .order-summary {
-   display: none;
+  .products-container {
+    .order-summary {
+      display: none;
+    }
   }
 }
