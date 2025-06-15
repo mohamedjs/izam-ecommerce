@@ -8,6 +8,6 @@ use Modules\Product\Models\Product;
 
 interface ProductRepositoryInterface
 {
-    public function all(array $filters = []): Collection|LengthAwarePaginator;
+    public function all(array $filters = []);
     public function find($id): ?Product;
 }

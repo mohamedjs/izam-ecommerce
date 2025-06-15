@@ -10,6 +10,7 @@ use Modules\Product\Filters\FilterInterface;
 use Modules\Product\Filters\PriceFilter;
 use Modules\Product\Filters\SearchFilter;
 use Modules\Product\Models\Product;
+use \Modules\Product\Resources\ProductResource;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -31,7 +32,7 @@ class ProductRepository implements ProductRepositoryInterface
         ];
     }
 
-    public function all(array $filters = []): Collection|LengthAwarePaginator
+    public function all(array $filters = [])
     {
         $cacheKey = $this->generateCacheKey($filters);
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($filters) {

@@ -7,6 +7,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Product\Models\Category;
 use Modules\Product\Models\Product;
 use Modules\Product\Repositories\ProductRepositoryInterface;
+use Modules\Product\Resources\ProductCollection;
+use Modules\Product\Resources\CategoryResource;
+
 
 class ProductService
 {
@@ -23,8 +26,8 @@ class ProductService
             return Category::all();
         });
         return [
-            'products' => $this->productRepository->all($filters),
-            'categories' => $category
+            'products' => new ProductCollection($this->productRepository->all($filters)),
+            'categories' => CategoryResource::collection($category)
         ];
     }
 

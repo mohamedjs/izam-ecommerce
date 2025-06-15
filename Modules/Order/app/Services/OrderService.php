@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Order\Events\OrderCreated;
 use Modules\Order\Models\Order;
 use Modules\Order\Repositories\OrderRepositoryInterface;
+use Modules\Order\Resources\OrderResource;
 
 class OrderService
 {
@@ -24,7 +25,7 @@ class OrderService
         return $this->orderRepository->find($id);
     }
 
-    public function createOrder(array $data): Order
+    public function createOrder(array $data): OrderResource
     {
         $data['order_number'] = $this->orderRepository->generateOrderNumber();
 
@@ -33,7 +34,7 @@ class OrderService
         // Dispatch event for order logging
         event(new OrderCreated($order));
 
-        return $order;
+        return new OrderResource($order);
     }
 
     public function updateOrder($id, array $data): ?Order
