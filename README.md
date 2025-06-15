@@ -16,6 +16,7 @@ This is a modular e-commerce platform built with Laravel and React, utilizing Do
 - [Architecture](#architecture)
   - [Backend (Laravel Modules)](#backend-laravel-modules)
   - [Frontend (React Application)](#frontend-react-application)
+- [Logging](#logging)
 
 ## Features
 
@@ -25,24 +26,6 @@ This platform provides core e-commerce functionalities, including:
 -   **Product Catalog:** Browse products, apply filters (category, price range, search).
 -   **Shopping Cart:** Add, update, and remove products from the cart.
 -   **Order Management:** Place orders and view order history.
-
-## API Endpoints
-
-The API endpoints are versioned and prefixed with `/api/v1`.
-
-### User Module
-
--   `POST /api/v1/login`: Authenticate a user and receive an API token.
--   `POST /api/v1/logout`: Invalidate the current user's API token (requires authentication).
-
-### Product Module
-
--   `GET /api/v1/products`: Retrieve a paginated list of products with optional filters (category, price range, search).
-
-### Order Module
-
--   `POST /api/v1/orders`: Create a new order (requires authentication).
-
 
 ## Authentication Flow
 
@@ -105,31 +88,28 @@ Make sure to configure them according to your needs. Examples are provided in `.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/mohamedjs/izam-ecommerce
     cd izam-ecommerce
     ```
 
 2.  **Create environment files:**
     ```bash
     cp .env.example .env
-    cp .env.docker.example .env.docker
     ```
+4. **Create Docker environment files:**
+    ```bash
+        cd devops
+        cp .env.docker.example .env
+    ```
+5. To start all Docker services (Nginx, PHP, MySQL, Redis, phpMyAdmin):
 
-To start all Docker services (Nginx, PHP, MySQL, Redis, phpMyAdmin):
-
-```bash
-cd devops && docker compose up -d
-```
-
-To start the React development server with hot reloading:
-
-```bash
-npm run dev
-```
+    ```bash
+    cd devops && docker compose up -d
+    ```
 
 Access the application in your browser:
 
--   **Frontend:** `http://localhost:80` (or `APP_PORT` if changed)
+-   **Frontend:** `http://localhost:8000` (or `APP_PORT` if changed)
 -   **phpMyAdmin:** `http://localhost:9090` (or `PHPMYADMIN_PORT` if changed)
 
 ## Architecture
@@ -201,3 +181,32 @@ resources/ts/src/
 ```
 
 This structure promotes modularity and maintainability, allowing developers to easily locate and work on specific features.
+
+## API Endpoints
+
+The API endpoints are versioned and prefixed with `/api/v1`.
+
+### User Module
+
+-   `POST /api/v1/login`: Authenticate a user and receive an API token.
+-   `POST /api/v1/logout`: Invalidate the current user's API token (requires authentication).
+
+### Product Module
+
+-   `GET /api/v1/products`: Retrieve a paginated list of products with optional filters (category, price range, search).
+
+### Order Module
+
+-   `POST /api/v1/orders`: Create a new order (requires authentication).
+
+
+## Logging
+
+The platform includes a comprehensive logging system for monitoring various aspects of the application.
+
+-   **Supervisor Logs:** Located at `devops/logs/supervisord.log`, this file records logs from the Supervisor process manager, including the status of PHP-FPM and queue workers.
+-   **Queue Worker Logs:** The Laravel queue worker, managed by Supervisor, logs its activities to `devops/logs/worker.log`. This includes output from processed jobs.
+-   **PHP-FPM Logs:** PHP-FPM process logs can be found at `devops/logs/php-fpm.log`.
+-   **Laravel Application Logs:** General Laravel application logs, including errors and queries, are stored in `storage/logs/laravel.log` within the Laravel application container.
+-   **Order Creation Logs:** Specific logs for order creation events are managed by the `LogOrderCreated` listener `storage/logs/orders-date`
+-   **Query Creation Logs:** Specific logs for any database query  `storage/logs/query`
