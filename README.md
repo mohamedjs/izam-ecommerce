@@ -1,61 +1,203 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Izam E-commerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a modular e-commerce platform built with Laravel and React, utilizing Docker for a streamlined development and deployment workflow.
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Features](#features)
+- [API Endpoints](#api-endpoints)
+- [Authentication Flow](#authentication-flow)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+  - [Running the Application](#running-the-application)
+- [Architecture](#architecture)
+  - [Backend (Laravel Modules)](#backend-laravel-modules)
+  - [Frontend (React Application)](#frontend-react-application)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This platform provides core e-commerce functionalities, including:
 
-## Learning Laravel
+-   **User Management:** Secure authentication (login) and user profiles.
+-   **Product Catalog:** Browse products, apply filters (category, price range, search).
+-   **Shopping Cart:** Add, update, and remove products from the cart.
+-   **Order Management:** Place orders and view order history.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## API Endpoints
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+The API endpoints are versioned and prefixed with `/api/v1`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### User Module
 
-## Laravel Sponsors
+-   `POST /api/v1/login`: Authenticate a user and receive an API token.
+-   `POST /api/v1/logout`: Invalidate the current user's API token (requires authentication).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Product Module
 
-### Premium Partners
+-   `GET /api/v1/products`: Retrieve a paginated list of products with optional filters (category, price range, search).
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Order Module
 
-## Contributing
+-   `POST /api/v1/orders`: Create a new order (requires authentication).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+## Authentication Flow
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The application uses Laravel Sanctum for API token authentication.
 
-## Security Vulnerabilities
+1.  **Login**: Users send their credentials (`email` and `password`) to the `POST /api/v1/login` endpoint.
+2.  **Token Generation**: Upon successful authentication, the backend generates a `plainTextToken` (API token) and returns it along with user details and token expiration.
+3.  **Client-side Storage**: The frontend (React application) stores this token (e.g., in a cookie or local storage) for subsequent authenticated requests.
+4.  **Authenticated Requests**: For protected routes (e.g., creating an order, viewing user-specific orders), the client includes this token in the `Authorization` header as a Bearer token (`Authorization: Bearer YOUR_API_TOKEN`).
+5.  **Logout**: Users can invalidate their current session token by sending a request to the `POST /api/v1/logout` endpoint.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Technologies Used
 
-## License
+-   **Backend:**
+    -   Laravel 12
+    -   Laravel Modules (nwidart/laravel-modules)
+    -   MySQL 8.0.32
+    -   Redis
+    -   PHP-FPM 8.2
+-   **Frontend:**
+    -   React 18
+    -   TypeScript
+    -   Vite
+    -   Redux Toolkit (for state management)
+    -   React Router DOM (for navigation)
+    -   Axios (for API communication)
+    -   Sass (for styling)
+    -   Tailwind
+    -   Lucide React (for icons)
+-   **DevOps/Infrastructure:**
+    -   Docker
+    -   Docker Compose
+    -   Nginx (as a web server)
+    -   Supervisor (for PHP processes)
+-   **Database Management:**
+    -   phpMyAdmin
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Getting Started
+
+Follow these instructions to get a copy of the project up and running on your local machine.
+
+### Prerequisites
+
+Ensure you have the following installed on your system:
+
+-   [Git](https://git-scm.com/)
+-   [Docker](https://www.docker.com/get-started)
+-   [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Environment Variables
+
+The project uses two environment files:
+
+-   `.env`: For Laravel application-specific configurations.
+-   `.env.docker`: For Docker Compose service configurations.
+
+Make sure to configure them according to your needs. Examples are provided in `.env.example` and `.env.docker.example`.
+
+### Running the Application
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd izam-ecommerce
+    ```
+
+2.  **Create environment files:**
+    ```bash
+    cp .env.example .env
+    cp .env.docker.example .env.docker
+    ```
+
+To start all Docker services (Nginx, PHP, MySQL, Redis, phpMyAdmin):
+
+```bash
+cd devops && docker compose up -d
+```
+
+To start the React development server with hot reloading:
+
+```bash
+npm run dev
+```
+
+Access the application in your browser:
+
+-   **Frontend:** `http://localhost:80` (or `APP_PORT` if changed)
+-   **phpMyAdmin:** `http://localhost:9090` (or `PHPMYADMIN_PORT` if changed)
+
+## Architecture
+
+### Backend (Laravel Modules)
+
+The Laravel backend is structured using the `nwidart/laravel-modules` package, promoting a modular and scalable architecture. Each major domain (e.g., User, Product, Order) is encapsulated within its own module.
+
+**Example: `Modules/Order` Structure**
+
+```
+Modules/Order/
+├── app/
+│   ├── Events/          # Application events (e.g., OrderCreated)
+│   ├── Http/
+│   │   ├── Controllers/ # API controllers for order-related actions
+│   │   ├── Requests/    # Form requests for validation
+│   │   └── Resources/   # API resources for data transformation
+│   ├── Listeners/       # Event listeners (e.g., LogOrderCreated)
+│   ├── Models/          # Eloquent models (e.g., Order)
+│   ├── Providers/       # Module-specific service providers (OrderServiceProvider, EventServiceProvider, RouteServiceProvider)
+│   ├── Repositories/   # Abstraction layer for data access (OrderRepositoryInterface, OrderRepository)
+│   └── Services/        # Business logic for orders (OrderService)
+├── config/
+│   └── config.php       # Module-specific configuration (tax rate, shipping rate, etc.)
+├── database/
+│   ├── factories/       # Model factories for testing and seeding
+│   ├── migrations/      # Database migration files
+│   └── seeders/         # Database seeders
+├── routes/
+│   ├── api.php          # API routes for the module
+│   └── web.php          # Web routes (if any)
+├── tests/
+│   ├── Feature/         # Feature tests
+│   └── Unit/            # Unit tests
+└── module.json          # Module manifest file
+```
+
+This structure ensures a clear separation of concerns, making the codebase easier to manage, test, and scale.
+
+### Frontend (React Application)
+
+The React frontend follows a feature-centric organization, where code related to a specific feature (e.g., Products, Cart, Auth) is grouped together. Redux Toolkit is used for centralized state management.
+
+**Example: `resources/ts/src/` Structure**
+
+```
+resources/ts/src/
+├── App.tsx              # Main application component with routing
+├── components/          # Reusable UI components
+│   ├── Layout/          # Layout components (e.g., Header)
+│   ├── Cart/            # Cart-specific components (CartItems, CartSummary, OrderSummary)
+│   ├── Product/         # Product-specific components (ProductCard, ProductFilters, ProductGrid, ProductPagination)
+│   └── shared/          # Generic reusable components (Button, Input, SearchInput)
+├── hooks/               # Custom React hooks
+├── pages/               # Top-level page components (e.g., Login, Products, Cart)
+│   ├── Login/
+│   ├── Products/
+│   └── Cart/
+├── store/               # Redux Toolkit store and slices
+│   ├── auth/            # Authentication slice (auth.slice.ts, auth.service.ts, auth.types.ts)
+│   ├── cart/            # Shopping cart slice (cart.slice.ts, cart.service.ts, cart.types.ts, cart.utils.ts)
+│   └── product/         # Product catalog slice (product.slice.ts, product.service.ts, product.types.ts, product.utils.ts)
+│   └── index.ts         # Redux store configuration
+├── styles/              # Global styles and variables
+├── config/              # Application configurations (e.g., axios instance)
+├── data/                # Mock data or static data
+└── main.tsx             # Entry point for the React application
+```
+
+This structure promotes modularity and maintainability, allowing developers to easily locate and work on specific features.
