@@ -172,7 +172,12 @@ resources/ts/src/
 ├── store/               # Redux Toolkit store and slices
 │   ├── auth/            # Authentication slice (auth.slice.ts, auth.service.ts, auth.types.ts)
 │   ├── cart/            # Shopping cart slice (cart.slice.ts, cart.service.ts, cart.types.ts, cart.utils.ts)
-│   └── product/         # Product catalog slice (product.slice.ts, product.service.ts, product.types.ts, product.utils.ts)
+│   └── product/         # Product management slice
+│       ├── product.slice.ts    # Redux slice for product state management
+│       ├── product.service.ts  # API service for product operations
+│       ├── product.types.ts    # TypeScript interfaces and types
+│       ├── product.utils.ts    # Helper functions for product data manipulation
+│       └── product.actions.ts  # Action creators for product operations
 │   └── index.ts         # Redux store configuration
 ├── styles/              # Global styles and variables
 ├── config/              # Application configurations (e.g., axios instance)
