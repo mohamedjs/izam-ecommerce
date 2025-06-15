@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie';
 import { CartItem, CartSummary } from './cart.types';
 
 export class CartUtils {
@@ -19,12 +20,14 @@ export class CartUtils {
     return Math.floor(Math.random() * 10000).toString();
   }
 
-  static getCartFromStateOrStorage(stateItems: any) {
+  static getCartFromStateOrStorage(stateItems: CartItem[]): CartItem[] {
     if (stateItems && stateItems.length > 0) return stateItems;
     try {
-      const local = localStorage.getItem('cart');
+      const local = Cookie.get('cart');
       if (local) return JSON.parse(local);
-    } catch {}
+    } catch (error) {
+      console.error('Error parsing cart from localStorage:', error);
+    }
     return [];
   }
 }

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { setFilters, setProductParams } from '@/store/product/product.slice';
+import { setProductParams } from '@/store/product/product.slice';
 import Button from '@/components/shared/Button/Button';
 import CategoryFilter from './CategoryFilter';
 import PriceFilter from './PriceFilter';
@@ -16,44 +16,52 @@ interface ProductFiltersProps {
 const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
   const { filters, categories } = useAppSelector((state) => state.product);
+  const products = useAppSelector((state) => state.product.products);
 
-  const [localFilters, setLocalFilters] = useState({
-    category: filters.category || 'All',
-    minPrice: filters.minPrice || 0,
-    maxPrice: filters.maxPrice || 300,
-  });
+  // Memoize min/max price from products
+  const [minPrice, maxPrice] = useMemo(() => {
+    if (!products.length) return [0, 300];
+    const prices = products.map(p => p.price);
+    return [Math.min(...prices), Math.max(...prices)];
+  }, [products]);
 
+  // Local state for filters
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(filters.category ? filters.category.map(String) : []);
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    filters.minPrice ?? minPrice,
+    filters.maxPrice ?? maxPrice,
+  ]);
   const [isPriceExpanded, setIsPriceExpanded] = useState(true);
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(true);
 
-  const handleCategoryChange = useCallback((category: string) => {
-    setLocalFilters(prev => ({ ...prev, category }));
+  // Handlers
+  const handleCategoryChange = useCallback((selected: string[]) => {
+    setSelectedCategories(selected);
   }, []);
 
-  const handlePriceChange = useCallback((type: 'min' | 'max', value: number) => {
-    setLocalFilters(prev => ({ ...prev, [type === 'min' ? 'minPrice' : 'maxPrice']: value }));
+  const handlePriceChange = useCallback((range: [number, number]) => {
+    setPriceRange(range);
   }, []);
 
   const handleApplyFilters = useCallback(() => {
+    // Convert selectedCategories to number[] for backend/types
+    const categoryIds = selectedCategories.map(id => Number(id));
     dispatch(setProductParams({
       filters: {
-        category: localFilters.category === 'All' ? undefined : localFilters.category,
-        minPrice: localFilters.minPrice,
-        maxPrice: localFilters.maxPrice,
+        category: categoryIds,
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
       },
-      page: 1
+      page: 1,
     }));
     onClose();
-  }, [dispatch, localFilters, onClose]);
+  }, [dispatch, selectedCategories, priceRange, onClose]);
 
   const handleClearFilters = useCallback(() => {
-    const resetFilters = { category: 'All', minPrice: 0, maxPrice: 300 };
-    setLocalFilters(resetFilters);
+    setSelectedCategories([]);
+    setPriceRange([minPrice, maxPrice]);
     dispatch(setProductParams({ filters: {}, page: 1 }));
-  }, [dispatch]);
-
-  const minPrice = 0;
-  const maxPrice = 300;
+  }, [dispatch, minPrice, maxPrice]);
 
   if (!isOpen) return null;
 
@@ -72,19 +80,17 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
           <div className="filter-section">
             <button
               className="filter-section__header"
-              onClick={() => setIsPriceExpanded(!isPriceExpanded)}
+              onClick={() => setIsPriceExpanded((prev) => !prev)}
             >
               <span>Price</span>
               {isPriceExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </button>
-
             {isPriceExpanded && (
               <div className="filter-section__content">
                 <PriceFilter
                   min={minPrice}
                   max={maxPrice}
-                  minValue={localFilters.minPrice}
-                  maxValue={localFilters.maxPrice}
+                  value={priceRange}
                   onChange={handlePriceChange}
                 />
               </div>
@@ -95,17 +101,16 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ isOpen, onClose }) => {
           <div className="filter-section">
             <button
               className="filter-section__header"
-              onClick={() => setIsCategoryExpanded(!isCategoryExpanded)}
+              onClick={() => setIsCategoryExpanded((prev) => !prev)}
             >
               <span>Category</span>
               {isCategoryExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </button>
-
             {isCategoryExpanded && (
               <div className="filter-section__content">
                 <CategoryFilter
                   categories={categories}
-                  selected={localFilters.category}
+                  selected={selectedCategories}
                   onChange={handleCategoryChange}
                 />
               </div>

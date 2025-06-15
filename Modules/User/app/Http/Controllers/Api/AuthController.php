@@ -2,13 +2,13 @@
 
 namespace Modules\User\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseAPIController;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Modules\User\Http\Requests\LoginRequest;
 use Modules\User\Services\UserService;
 
-class AuthController extends Controller
+class AuthController extends BaseAPIController
 {
     protected $userService;
 
@@ -33,7 +33,7 @@ class AuthController extends Controller
         $token = $this->userService->createToken($user);
         $expiration = now()->addHours(config('user.token_expiration'))->format('Y-m-d H:s');
 
-        return response()->json([
+        return $this->OK([
             'user' => $user,
             'token' => $token->plainTextToken,
             'expire_at' => $expiration
@@ -44,6 +44,6 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out successfully'], 201);
+        return $this->OK(['message' => 'Logged out successfully'], 201);
     }
 }

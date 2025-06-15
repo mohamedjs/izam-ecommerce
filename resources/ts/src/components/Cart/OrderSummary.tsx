@@ -5,12 +5,13 @@ import { CartUtils } from '@/store/cart/cart.utils';
 import Button from '@/components/shared/Button/Button';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import './OrderSummary.scss';
+import { useNavigate } from 'react-router-dom';
 
 const OrderSummary: React.FC = () => {
   const dispatch = useAppDispatch();
-  const stateItems = useAppSelector((state) => state.cart.items);
-  const items = CartUtils.getCartFromStateOrStorage(stateItems);
+  const { items } = useAppSelector((state) => state.cart);
   const summary = CartUtils.calculateCartSummary(items);
+  const navigate = useNavigate();
 
   const handleRemove = (id: string) => {
     dispatch(CartService.removeFromCart(id));
@@ -47,7 +48,7 @@ const OrderSummary: React.FC = () => {
         <div><span>Tax</span><span>${summary.tax.toFixed(2)}</span></div>
         <div className="order-summary-total"><b>Total</b><b>${summary.total.toFixed(2)}</b></div>
       </div>
-      <Button variant="primary" size="lg" className="checkout-btn" disabled={items.length === 0}>
+      <Button variant="primary" size="lg" className="checkout-btn" disabled={items.length === 0} onClick={() => navigate('/cart')}>
         Proceed to Checkout
       </Button>
     </aside>

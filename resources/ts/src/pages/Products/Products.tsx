@@ -1,38 +1,31 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import { setFilters, setCurrentPage, setProductParams } from '@/store/product/product.slice';
+import React, { useEffect, useState } from 'react';
+import { Filter } from 'lucide-react';
+import { setProductParams } from '@/store/product/product.slice';
 import SearchInput from '@/components/shared/SearchInput/SearchInput';
-import ProductCard from '@/components/Product/ProductCard/ProductCard';
 import ProductFilters from '@/components/Product/ProductFilters/ProductFilters';
-import Button from '@/components/shared/Button/Button';
 import './Products.scss';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { ProductService } from '@/store/product/product.service';
 import { getPageNumbers, getProductDisplayRange } from '@/store/product/product.utils';
-import { getCartFromStateOrStorage } from '@/store/cart/cart.utils';
 import OrderSummary from '@/components/Cart/OrderSummary';
 import useWindowSize from '@/hooks/useWindowSize';
+import ProductGrid from '@/components/Product/ProductGrid';
+import ProductPagination from '@/components/Product/ProductPagination';
 
 const Products: React.FC = () => {
   const dispatch = useAppDispatch();
   const { products, loading, currentPage, totalPages, totalProducts, filters } = useAppSelector((state) => state.product);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const {width} = useWindowSize()
+  const { width } = useWindowSize();
 
-  useEffect(() => {
-    dispatch(ProductService.fetchCategoriesAsync());
-  }, []);
-
-  // Debounce the product fetch effect
   useEffect(() => {
     dispatch(ProductService.fetchProductsAsync({
-        page: currentPage,
-        limit: 12,
-        filters
+      page: currentPage,
+      limit: 12,
+      filters,
     }));
-
-  }, [currentPage, filters]);
+  }, [currentPage, filters, dispatch]);
 
   function handleSearch(query: string) {
     dispatch(setProductParams({
@@ -44,7 +37,6 @@ const Products: React.FC = () => {
   function handlePageChange(page: number) {
     if (page > 0 && page <= totalPages) {
       dispatch(setProductParams({ page }));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -69,12 +61,11 @@ const Products: React.FC = () => {
           {/* Header */}
           <div className="products-header">
             <div className="products-search">
-              <SearchInput onSearch={handleSearch} onFilter={openFilters}/>
+              <SearchInput onSearch={handleSearch} onFilter={openFilters} />
             </div>
-            {width > 765 &&  <button className="filter-toggle" onClick={openFilters}>
+            {width > 765 && <button className="filter-toggle" onClick={openFilters}>
               <Filter size={20} />
             </button>}
-
           </div>
 
           {/* Title and Results Count */}
@@ -86,68 +77,15 @@ const Products: React.FC = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="products-grid">
-            {loading ? (
-              <div className="products-loading">
-                <div className="loading-spinner" />
-                <p>Loading products...</p>
-              </div>
-            ) : products.length > 0 ? (
-              products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            ) : (
-              <div className="products-empty">
-                <p>No products found matching your criteria.</p>
-              </div>
-            )}
-          </div>
+          <ProductGrid products={products} loading={loading} />
 
           {/* Pagination */}
-          {totalPages > 1 && (totalProducts > 0) && (
-            <nav className="pagination" aria-label="Product Pagination">
-              <Button
-                variant="ghost"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage <= 1}
-                icon={<ChevronLeft size={16} />}
-                aria-label="Previous Page"
-                className='btn-prev'
-              >
-                Previous
-              </Button>
-
-              <div className="pagination-numbers-wrapper">
-                <div className="pagination-numbers" style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 4px' }}>
-                  {pageNumbers.map((page, index) => (
-                    page === '...'
-                      ? <span key={index} className="pagination-ellipsis" aria-hidden="true">...</span>
-                      : <button
-                          key={page}
-                          className={`pagination-number${currentPage === page ? ' active' : ''}`}
-                          onClick={() => handlePageChange(page as number)}
-                          aria-current={currentPage === page ? 'page' : undefined}
-                          aria-label={`Go to page ${page}`}
-                          style={{ minWidth: 40, minHeight: 40, fontSize: 16, borderRadius: 8 }}
-                        >
-                          {page}
-                        </button>
-                  ))}
-                </div>
-              </div>
-
-              <Button
-                variant="ghost"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= totalPages}
-                icon={<ChevronRight size={16} />}
-                aria-label="Next Page"
-                className='btn-prev'
-              >
-                Next
-              </Button>
-            </nav>
-          )}
+          <ProductPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageNumbers={pageNumbers}
+            handlePageChange={handlePageChange}
+          />
         </div>
         <div style={{ width: 340, minWidth: 300 }}>
           <OrderSummary />

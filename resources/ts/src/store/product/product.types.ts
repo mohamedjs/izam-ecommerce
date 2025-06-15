@@ -2,14 +2,14 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  category: string;
+  category: Category;
   stock: number;
   image: string;
   description: string;
 }
 
 export interface ProductFilters {
-  category?: string;
+  category?: number[];
   minPrice?: number;
   maxPrice?: number;
   search?: string;
@@ -31,5 +31,10 @@ export interface ProductState {
   totalPages: number;
   totalProducts: number;
   filters: ProductFilters;
-  categories: string[];
+  categories: Category[];
+}
+
+export interface Category {
+  id: string;
+  name: string;
 }

@@ -1,13 +1,13 @@
 import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { CartState, AddToCartPayload, UpdateQuantityPayload } from './cart.types';
-import { CartUtils } from './cart.utils';
+import Cookie from 'js-cookie';
 
 export class CartService {
   static addToCart = createAsyncThunk(
     'cart/addToCart',
     async (payload: AddToCartPayload, thunkApi) => {
       try {
-        const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        const cartItems = JSON.parse(Cookie.get('cart') || '[]');
         const existingItem = cartItems.find((item: any) => item.product.id === payload.product.id);
 
         if (existingItem) {
@@ -20,7 +20,7 @@ export class CartService {
           });
         }
 
-        localStorage.setItem('cart', JSON.stringify(cartItems));
+        Cookie.set('cart', JSON.stringify(cartItems));
         return payload;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);
@@ -32,9 +32,9 @@ export class CartService {
     'cart/removeFromCart',
     async (id: string, thunkApi) => {
       try {
-        const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        const cartItems = JSON.parse(Cookie.get('cart') || '[]');
         const updatedItems = cartItems.filter((item: any) => item.id !== id);
-        localStorage.setItem('cart', JSON.stringify(updatedItems));
+        Cookie.set('cart', JSON.stringify(updatedItems));
         return id;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);
@@ -46,7 +46,7 @@ export class CartService {
     'cart/updateQuantity',
     async (payload: UpdateQuantityPayload, thunkApi) => {
       try {
-        const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+        const cartItems = JSON.parse(Cookie.get('cart') || '[]');
         const itemIndex = cartItems.findIndex((item: any) => item.id === payload.id);
 
         if (itemIndex !== -1) {
@@ -55,7 +55,7 @@ export class CartService {
           } else {
             cartItems[itemIndex].quantity = payload.quantity;
           }
-          localStorage.setItem('cart', JSON.stringify(cartItems));
+          Cookie.set('cart', JSON.stringify(cartItems));
         }
         return payload;
       } catch (err: any) {
@@ -68,7 +68,7 @@ export class CartService {
     'cart/clearCart',
     async (_, thunkApi) => {
       try {
-        localStorage.removeItem('cart');
+        Cookie.remove('cart');
         return true;
       } catch (err: any) {
         return thunkApi.rejectWithValue(err);

@@ -13,7 +13,8 @@ const Header: React.FC = () => {
   const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
   const { items } = useAppSelector((state) => state.cart);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
+  const cartItems = items;
+  const cartItemsCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const handleLogout = () => {
     dispatch(AuthService.logoutAsync());

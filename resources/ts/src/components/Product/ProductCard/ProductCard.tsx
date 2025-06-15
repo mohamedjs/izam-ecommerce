@@ -14,7 +14,6 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
-
   const cartItem = items.find(item => item.product.id === product.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 

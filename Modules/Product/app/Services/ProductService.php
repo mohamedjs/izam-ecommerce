@@ -4,6 +4,7 @@ namespace Modules\Product\Services;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Modules\Product\Models\Category;
 use Modules\Product\Models\Product;
 use Modules\Product\Repositories\ProductRepositoryInterface;
 
@@ -16,9 +17,15 @@ class ProductService
         $this->productRepository = $productRepository;
     }
 
-    public function getAllProducts(array $filters = []): Collection|LengthAwarePaginator
+    public function getAllProducts(array $filters = []): array
     {
-        return $this->productRepository->all($filters);
+        $category = cache()->remember('categories', 60 * 60 * 24, function () {
+            return Category::all();
+        });
+        return [
+            'products' => $this->productRepository->all($filters),
+            'categories' => $category
+        ];
     }
 
     public function getProduct($id): ?Product

@@ -32,7 +32,6 @@ export const productSlice = createSlice({
       .addCase(ProductService.fetchProductsAsync.pending, ProductService.handleFetchProductsPending)
       .addCase(ProductService.fetchProductsAsync.fulfilled, ProductService.handleFetchProductsFulfilled)
       .addCase(ProductService.fetchProductsAsync.rejected, ProductService.handleFetchProductsRejected)
-      .addCase(ProductService.fetchCategoriesAsync.fulfilled, ProductService.handleFetchCategoriesFulfilled)
   },
 });
 

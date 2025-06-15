@@ -1,17 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, Minus, Plus } from 'lucide-react';
 import { CartUtils } from '@/store/cart/cart.utils';
 import Button from '@/components/shared/Button/Button';
 import './Cart.scss';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { CartService } from '@/store/cart/cart.service';
+import CartItems from '@/components/Cart/CartItems';
+import CartSummary from '@/components/Cart/CartSummary';
 
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
-  
   const cartSummary = CartUtils.calculateCartSummary(items);
   const orderId = CartUtils.generateOrderId();
 
@@ -55,86 +55,15 @@ const Cart: React.FC = () => {
           {/* Cart Items */}
           <div className="cart-items">
             <h1 className="cart-title">Your cart</h1>
-            
-            <div className="cart-items-list">
-              {items.map((item) => (
-                <div key={item.id} className="cart-item">
-                  <div className="cart-item-image">
-                    <img src={item.product.image} alt={item.product.name} />
-                  </div>
-                  
-                  <div className="cart-item-details">
-                    <div className="cart-item-info">
-                      <h3 className="cart-item-name">{item.product.name}</h3>
-                      <p className="cart-item-category">{item.product.category}</p>
-                      <div className="cart-item-footer">
-                        <span className="cart-item-price">${item.product.price}</span>
-                        <span className="cart-item-stock">Stock: {item.product.stock}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="cart-item-actions">
-                      <button
-                        className="cart-item-remove"
-                        onClick={() => handleRemoveItem(item.id)}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                      
-                      <div className="cart-item-quantity">
-                        <button 
-                          className="quantity-btn"
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                          disabled={item.quantity <= 1}
-                        >
-                          <Minus size={16} />
-                        </button>
-                        <span className="quantity-value">{item.quantity}</span>
-                        <button 
-                          className="quantity-btn"
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.product.stock}
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <CartItems
+              items={items}
+              onRemove={handleRemoveItem}
+              onUpdateQuantity={handleUpdateQuantity}
+            />
           </div>
 
           {/* Order Summary */}
-          <div className="order-summary">
-            <div className="order-summary-header">
-              <h2>Order Summary (#{orderId})</h2>
-              <span className="order-date">{new Date().toLocaleDateString()}</span>
-            </div>
-            
-            <div className="order-summary-details">
-              <div className="summary-row">
-                <span>Subtotal</span>
-                <span>${cartSummary.subtotal.toFixed(2)}</span>
-              </div>
-              <div className="summary-row">
-                <span>Shipping</span>
-                <span>${cartSummary.shipping.toFixed(2)}</span>
-              </div>
-              <div className="summary-row">
-                <span>Tax (14%)</span>
-                <span>${cartSummary.tax.toFixed(2)}</span>
-              </div>
-              <div className="summary-row summary-row--total">
-                <span>Total</span>
-                <span>${cartSummary.total.toFixed(2)}</span>
-              </div>
-            </div>
-            
-            <Button variant="primary" size="lg" className="checkout-btn">
-              Place the order
-            </Button>
-          </div>
+          <CartSummary items={items} summary={cartSummary} orderId={orderId} />
         </div>
       </div>
     </div>
