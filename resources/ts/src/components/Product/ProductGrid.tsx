@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import ProductCard from './ProductCard/ProductCard';
 import { Product } from '@/store/product/product.types';
 
@@ -28,4 +28,4 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, loading }) => {
   );
 };
 
-export default ProductGrid;
+export default memo(ProductGrid);

@@ -22,21 +22,16 @@ class ProductService
 
     public function getAllProducts(array $filters = []): array
     {
+        $result = $this->productRepository->all($filters);
+
         $category = cache()->remember('categories', 60 * 60 * 24, function () {
             return Category::all();
         });
 
-        $priceRange = cache()->remember('price_range', 60 * 60 * 24, function () {
-            return [
-                'min' => Product::min('price'),
-                'max' => Product::max('price')
-            ];
-        });
-
         return [
-            'products' => new ProductCollection($this->productRepository->all($filters)),
+            'products' => new ProductCollection($result['products']),
             'categories' => CategoryResource::collection($category),
-            'price_range' => $priceRange
+            'price_range' => $result['price_range']
         ];
     }
 

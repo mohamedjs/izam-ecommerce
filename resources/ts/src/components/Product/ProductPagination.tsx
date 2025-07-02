@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Button from '@/components/shared/Button/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -55,4 +55,4 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({ currentPage, tota
   );
 };
 
-export default ProductPagination;
+export default memo(ProductPagination);

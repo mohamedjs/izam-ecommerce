@@ -35,16 +35,37 @@ class ProductRepository implements ProductRepositoryInterface
     public function all(array $filters = [])
     {
         $cacheKey = $this->generateCacheKey($filters);
+
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($filters) {
-            $query = $this->model->query();
+            // Build base query with all filters except price
+            $baseQuery = $this->model->query();
 
             foreach ($filters as $key => $value) {
-                if (isset($this->filters[$key]) && $value !== null) {
-                    $this->filters[$key]->apply($query, $value);
+                if (isset($this->filters[$key]) && $value !== null && $key !== 'price') {
+                    $this->filters[$key]->apply($baseQuery, $value);
                 }
             }
 
-            return $query->with('category')->paginate(request()->get('limit'));
+            // Get price range in a separate optimized query
+            $priceRangeQuery = clone $baseQuery;
+            $priceRange = $priceRangeQuery->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
+                ->first();
+
+            // Apply price filter to base query for products
+            if (isset($filters['price']) && $filters['price'] !== null) {
+                $this->filters['price']->apply($baseQuery, $filters['price']);
+            }
+
+            // Get paginated products with eager loading
+            $products = $baseQuery->with(['category'])->paginate(request()->get('limit', 15));
+
+            return [
+                'products' => $products,
+                'price_range' => [
+                    'min' => $priceRange->min_price ?? 0,
+                    'max' => $priceRange->max_price ?? 0,
+                ]
+            ];
         });
     }
 
@@ -57,6 +78,8 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return $this->model->with('category')->find($id);
     }
+
+
 
     protected function clearCache(): void
     {

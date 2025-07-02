@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Product } from '@/store/product/product.types';
 import Button from '@/components/shared/Button/Button';
@@ -16,6 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const { items } = useAppSelector((state) => state.cart);
   const cartItem = items.find(item => item.product.id === product.id);
   const quantity = cartItem ? cartItem.quantity : 0;
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const handleAddToCart = useCallback(() => {
     dispatch(CartService.addToCart({ product, quantity: 1 }));
@@ -37,11 +38,19 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
 
   return (
     <div className="product-card">
-      <div className="product-card__image">
-        <img src={product.main_image} alt={product.name} />
-        {quantity > 0 && (
-          <div className="product-card__badge">{quantity}</div>
-        )}
+      <div className="product-card__image-wrapper">
+        <div className="product-card__image">
+          <img
+            src={product.main_image}
+            alt={product.name}
+            loading="lazy"
+            onLoad={() => setIsImageLoaded(true)}
+            className={isImageLoaded ? 'product-card__image--loaded' : ''}
+          />
+          {quantity > 0 && (
+            <div className="product-card__badge">{quantity}</div>
+          )}
+        </div>
       </div>
 
       <div className="product-card__content">

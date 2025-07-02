@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import Header from './components/Layout/Header/Header';
-import Login from './pages/Login/Login';
-import Products from './pages/Products/Products';
-import Cart from './pages/Cart/Cart';
 import './styles/app.scss';
 import ProtectedRoute from './components/Routes/ProtectedRoute';
+
+const Products = lazy(() => import('./pages/Products/Products'));
+const Cart = lazy(() => import('./pages/Cart/Cart'));
+const Login = lazy(() => import('./pages/Login/Login'));
 
 const App: React.FC = () => {
   return (
@@ -16,15 +17,17 @@ const App: React.FC = () => {
         <div className="app">
           <Header />
           <main className="app-main">
-            <Routes>
-              <Route path="/" element={<Navigate to="/products" />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/products" element={<Products />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/cart" element={<Cart />} />
-              </Route>
-              <Route path="*" element={<Navigate to="/products" />} />
-            </Routes>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<Navigate to="/products" />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/products" element={<Products />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/cart" element={<Cart />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/products" />} />
+              </Routes>
+            </Suspense>
           </main>
         </div>
       </Router>
