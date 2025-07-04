@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Filter } from 'lucide-react';
 import { setProductParams } from '@/store/product/product.slice';
 import SearchInput from '@/components/shared/SearchInput/SearchInput';
@@ -12,27 +12,31 @@ import OrderSummary from '@/components/Cart/OrderSummary';
 import useWindowSize from '@/hooks/useWindowSize';
 import ProductGrid from '@/components/Product/ProductGrid';
 import ProductPagination from '@/components/Product/ProductPagination';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const Products: React.FC = () => {
   const dispatch = useAppDispatch();
   const { products, loading, currentPage, totalPages, totalProducts, filters, priceRangeData } = useAppSelector((state) => state.product);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(filters.search || '');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const { width } = useWindowSize();
 
   useEffect(() => {
     dispatch(ProductService.fetchProductsAsync({
       page: currentPage,
       limit: 12,
-      filters,
+      filters: { ...filters, search: debouncedSearchQuery },
     }));
-  }, [currentPage, filters, dispatch]);
+  }, [currentPage, debouncedSearchQuery, filters, dispatch]);
 
-  function handleSearch(query: string) {
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
     dispatch(setProductParams({
       filters: { search: query },
       page: 1
     }));
-  }
+  }, [dispatch]);
 
   function handlePageChange(page: number) {
     if (page > 0 && page <= totalPages) {
